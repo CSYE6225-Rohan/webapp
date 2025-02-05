@@ -1,5 +1,6 @@
 const { Sequelize } = require('sequelize');
-require('dotenv').config();
+const path = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
+require('dotenv').config({ path });
 
 const sequelize = new Sequelize(process.env.database, process.env.username, process.env.password, {
     host: process.env.hostname,
