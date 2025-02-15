@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "NODE_ENV=test jest",
+    "test": "dotenv -e .env -- jest",
     "start": "nodemon server.js"
   },
   "author": "Rohan",
@@ -17,6 +17,7 @@
     "sequelize": "^6.37.5"
   },
   "devDependencies": {
+    "dotenv-cli": "^8.0.0",
     "nodemon": "^3.1.9",
     "supertest": "^7.0.0"
   }
