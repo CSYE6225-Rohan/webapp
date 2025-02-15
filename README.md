@@ -11,3 +11,11 @@ Build and Deploy instructions for the web application.
 2. Execute command "node server.js" to start web server
 3. Open API testing tool and hit API "http://127.0.0.1:8080/healthz"
 4. Check if entry for hit is added in mysql db
+
+Create .env and ubuntu.env from their templates and fill values
+
+Order to run
+In zsh: Settings_ubuntu.sh
+In zsh: Setting_files.sh
+In bash: /opt/ubuntu.sh
+
