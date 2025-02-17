@@ -19,10 +19,10 @@ Order to run
 2. In zsh: setting_files.sh - this will send necessary files to ubuntu
 3. In bash: /opt/ubuntu.sh - this will set the ubuntu up for running server
 
-To run server
+To run server:
 npm start
 
-To test
+To test:
 npm test
 
 CI
