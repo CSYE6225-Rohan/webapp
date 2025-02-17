@@ -1,6 +1,7 @@
 name: Node.js Tests with MySQL
 
 on: pull_request
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -10,9 +11,9 @@ jobs:
         image: mysql:latest
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: ${{ secrets.DB_NAME }}
-          MYSQL_USER: ${{ secrets.DB_USER }}
-          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: cloud_computing
+          MYSQL_USER: root
+          MYSQL_PASSWORD: AuzJ7268*
         ports:
           - 3306:3306
         options: >-
@@ -27,25 +28,17 @@ jobs:
 
       - name: Set up environment file
         run: |
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_USER=root" >> .env
+          echo "DB_PASSWORD=AuzJ7268*" >> .env
+          echo "DB_NAME=cloud_computing" >> .env
+          echo "DB_PORT=3306" >> .env
 
       - name: Install dependencies
         run: npm install
 
-      - name: Test MySQL connection
-        run: |
-          for i in {30..0}; do
-            if mysqladmin ping -h "${{ secrets.DB_HOST }}" -u"${{ secrets.DB_USER }}" -p"${{ secrets.DB_PASSWORD }}" --silent; then
-              echo "MySQL is connected!"
-              break
-            fi
-            echo 'Waiting for MySQL...'
-            sleep 2
-          done
+      - name: Wait for MySQL to be ready
+        run: sleep 20
 
       - name: Run tests
         run: npm test
