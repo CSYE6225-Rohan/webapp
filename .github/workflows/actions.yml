@@ -16,7 +16,6 @@ jobs:
           MYSQL_PASSWORD: "${{secrets.DB_PASSWORD}}"     
           MYSQL_PORT: "${{ secrets.DB_PORT }}"
 
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,6 +30,9 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Wait for MySQL to be ready
+        run: sleep 20
 
       - name: Run tests
         run: npm test
