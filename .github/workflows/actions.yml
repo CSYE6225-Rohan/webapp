@@ -1,6 +1,7 @@
 name: Node.js Tests with MySQL
 
 on: pull_request
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -9,7 +10,7 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
           MYSQL_DATABASE: ${{ secrets.DB_NAME }}
           MYSQL_USER: ${{ secrets.DB_USER }}
           MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
@@ -27,25 +28,22 @@ jobs:
 
       - name: Set up environment file
         run: |
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "hostname=${{ secrets.DB_HOST }}" >> .env
+          echo "username=${{ secrets.DB_USER }}" >> .env
+          echo "password=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "database=${{ secrets.DB_NAME }}" >> .env
+          echo "port=3306" >> .env
+          echo "ubuntu_ip=${{ secrets.UBUNTU_IP }}" >> .env
+          echo "ssh_key=${{ secrets.SSH_KEY }}" >> .env
+          echo "path_of_zip=${{ secrets.PATH_OF_ZIP }}" >> .env
+          echo "path_of_ubuntu_sh=${{ secrets.PATH_OF_UBUNTU_SH }}" >> .env
+          echo "key=${{ secrets.KEY }}" >> .env
 
       - name: Install dependencies
         run: npm install
 
-      - name: Test MySQL connection
-        run: |
-          for i in {30..0}; do
-            if mysqladmin ping -h "${{ secrets.DB_HOST }}" -u"${{ secrets.DB_USER }}" -p"${{ secrets.DB_PASSWORD }}" --silent; then
-              echo "MySQL is connected!"
-              break
-            fi
-            echo 'Waiting for MySQL...'
-            sleep 2
-          done
+      - name: Wait for MySQL to be ready
+        run: sleep 20
 
       - name: Run tests
         run: npm test
