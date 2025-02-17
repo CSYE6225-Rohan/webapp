@@ -27,3 +27,4 @@ npm test
 
 CI
 On creating a pull request to main branch, npm test will happen as it has been added in github workflows. Credentials can be set in github secrets
+test

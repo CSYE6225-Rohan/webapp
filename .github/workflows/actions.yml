@@ -10,7 +10,7 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: "${{secrets.DB_ROOT_PASSWORD}}"   # Different from local .env value
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes" 
           MYSQL_DATABASE: "${{secrets.DB_NAME}}"             # Test database name (different from local)
           MYSQL_USER: "${{secrets.DB_USER}}"               # Test user (different from local)
           MYSQL_PASSWORD: "${{secrets.DB_PASSWORD}}"     # Test user password (different from local)
