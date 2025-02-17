@@ -15,7 +15,7 @@ Build and Deploy instructions for the web application.
 Create .env and ubuntu.env from their templates and fill values
 
 Order to run
-In zsh: Settings_ubuntu.sh
-In zsh: Setting_files.sh
-In bash: /opt/ubuntu.sh
+1. In zsh: settings_ubuntu.sh - this will initialize ubuntu
+2. In zsh: setting_files.sh - this will send necessary files to ubuntu
+3. In bash: /opt/ubuntu.sh - this will set the ubuntu up for running server
 

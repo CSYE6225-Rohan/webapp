@@ -14,12 +14,12 @@ sudo apt update
 #Update the packages on the system.
 sudo apt upgrade -y
 
-#Install the RDBMS (MySQL/PostgreSQL/MariaDB).
+#Install the Mysql
 sudo apt install mysql-server -y
 
 #invoke .env file
 # shellcheck disable=SC1091
-source /opt/ubuntu.env
+source /opt/csye6225/webapp/ubuntu.env
 
 #change authentication method from auth_socket to native password
 sudo mysql -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "ALTER USER '$MYSQL_USER'@'$MYSQL_HOST' IDENTIFIED WITH mysql_native_password BY '$MYSQL_PASSWORD';"
@@ -33,13 +33,20 @@ sudo groupadd csye6225_group
 #Create a new user of the application.
 sudo useradd -m -s /bin/bash csye6225_user
 
-#Update the permissions of the folder and artifacts in the directory.
-chmod -R 744 /opt/csye6225/webapp #setting read, write and execute permission for owner and only read for group users and others
+#Update the permissions of the webapp and making the user owner of webapp.zip
+sudo chown -R csye6225_user:csye6225_user /opt/csye6225/webapp
+
+sudo chmod -R 774 /opt/csye6225/webapp
 
 #Installing node on ubuntu
-sudo apt install -y nodejs
+apt install -y nodejs
+
+#switching to user
+# shellcheck disable=SC2117
+su csye6225_user
 
 #navigating to webapp
+# shellcheck disable=SC2164
 cd /opt/csye6225/webapp
 
 #running the web service
