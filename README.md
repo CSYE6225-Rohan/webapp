@@ -25,6 +25,6 @@ npm start
 To test:
 npm test
 
-CI
+Continous Integration:
 On creating a pull request to main branch, npm test will happen as it has been added in github workflows. Credentials can be set in github secrets in repo secrets
 
