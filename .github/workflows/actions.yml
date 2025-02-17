@@ -1,6 +1,9 @@
 name: Node.js Tests with MySQL
 
-on: pull_request_target
+on:
+  pull_request_target:
+    branches:
+      - main  # This ensures the workflow runs only when a PR targets the 'main' branch
 
 jobs:
   test:
@@ -10,10 +13,10 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: "${{secrets.DB_ROOT_PASSWORD}}"   # Different from local .env value
-          MYSQL_DATABASE: "${{secrets.DB_NAME}}"             # Test database name (different from local)
-          MYSQL_USER: "${{secrets.DB_USER}}"               # Test user (different from local)
-          MYSQL_PASSWORD: "${{secrets.DB_PASSWORD}}"     # Test user password (different from local)
+          MYSQL_ROOT_PASSWORD: "${{secrets.DB_ROOT_PASSWORD}}" 
+          MYSQL_DATABASE: "${{secrets.DB_NAME}}"             
+          MYSQL_USER: "${{secrets.DB_USER}}"               
+          MYSQL_PASSWORD: "${{secrets.DB_PASSWORD}}"     
         ports:
           - 3306:3306
 
