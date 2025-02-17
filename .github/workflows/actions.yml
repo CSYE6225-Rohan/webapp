@@ -1,6 +1,6 @@
 name: Node.js Tests with MySQL
 
-on: pull_request
+on: pull_request_target
 
 jobs:
   test:
@@ -28,7 +28,7 @@ jobs:
 
       - name: Set up environment file
         run: |
-          echo "hostname=${{secrets.DB_HOSTS}}" >> .env
+          echo "hostname=${{secrets.DB_HOST}}" >> .env
           echo "username=${{secrets.DB_USER}}" >> .env       # Different than in local .env
           echo "password=testpassword123" >> .env # Different than in local .env
           echo "database=test_db" >> .env         # Different than in local .env
