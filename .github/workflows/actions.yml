@@ -1,0 +1,39 @@
+name: Node.js Tests with MySQL
+
+on: pull_request_target
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: "${{secrets.DB_ROOT_PASSWORD}}"   # Different from local .env value
+          MYSQL_DATABASE: "${{secrets.DB_NAME}}"             # Test database name (different from local)
+          MYSQL_USER: "${{secrets.DB_USER}}"               # Test user (different from local)
+          MYSQL_PASSWORD: "${{secrets.DB_PASSWORD}}"     # Test user password (different from local)
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up environment file
+        run: |
+          echo "hostname=${{secrets.DB_HOST}}" >> .env
+          echo "username=${{secrets.DB_USER}}" >> .env
+          echo "password=${{secrets.DB_PASSWORD}}" >> .env 
+          echo "database=${{secrets.DB_NAME}}" >> .env        
+          echo "port=${{secrets.DB_PORT}}" >> .env
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Wait for MySQL to be ready
+        run: sleep 20
+
+      - name: Run tests
+        run: npm test
