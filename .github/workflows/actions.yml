@@ -10,7 +10,7 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"  # Root user with no password
           MYSQL_DATABASE: ${{ secrets.DB_NAME }}
           MYSQL_USER: ${{ secrets.DB_USER }}
           MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
@@ -33,11 +33,6 @@ jobs:
           echo "password=${{ secrets.DB_PASSWORD }}" >> .env
           echo "database=${{ secrets.DB_NAME }}" >> .env
           echo "port=3306" >> .env
-          echo "ubuntu_ip=${{ secrets.UBUNTU_IP }}" >> .env
-          echo "ssh_key=${{ secrets.SSH_KEY }}" >> .env
-          echo "path_of_zip=${{ secrets.PATH_OF_ZIP }}" >> .env
-          echo "path_of_ubuntu_sh=${{ secrets.PATH_OF_UBUNTU_SH }}" >> .env
-          echo "key=${{ secrets.KEY }}" >> .env
 
       - name: Install dependencies
         run: npm install
