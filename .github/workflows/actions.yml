@@ -10,11 +10,12 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: "${{secrets.DB_ROOT_PASSWORD}}"  
-          MYSQL_DATABASE: "${{secrets.DB_NAME}}"             
-          MYSQL_USER: "${{secrets.DB_USER}}"               
-          MYSQL_PASSWORD: "${{secrets.DB_PASSWORD}}"     
-          MYSQL_PORT: "${{ secrets.DB_PORT }}"
+          MYSQL_ROOT_PASSWORD: "${{secrets.DB_ROOT_PASSWORD}}"
+          MYSQL_DATABASE: "${{secrets.DB_NAME}}"
+          MYSQL_USER: "${{secrets.DB_USER}}"
+          MYSQL_PASSWORD: "${{secrets.DB_PASSWORD}}"
+          MYSQL_PORT: "${{secrets.DB_PORT}}"
+
 
     steps:
       - name: Checkout repository
@@ -32,7 +33,16 @@ jobs:
         run: npm install
 
       - name: Wait for MySQL to be ready
-        run: sleep 20
+        run: |
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 --silent; then
+              echo "MySQL is up!"
+              break
+            else
+              echo "Waiting for MySQL to be ready..."
+              sleep 5
+            fi
+          done
 
       - name: Run tests
         run: npm test
