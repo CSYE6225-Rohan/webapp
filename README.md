@@ -19,3 +19,4 @@ In zsh: Settings_ubuntu.sh
 In zsh: Setting_files.sh
 In bash: /opt/ubuntu.sh
 
+test
