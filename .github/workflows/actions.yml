@@ -10,10 +10,10 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: "yes" 
-          MYSQL_DATABASE: "${{secrets.DB_NAME}}"             # Test database name (different from local)
-          MYSQL_USER: "${{secrets.DB_USER}}"               # Test user (different from local)
-          MYSQL_PASSWORD: "${{secrets.DB_PASSWORD}}"     # Test user password (different from local)
+          MYSQL_ROOT_PASSWORD: "rootpassword"   # Different from local .env value
+          MYSQL_DATABASE: "test_db"             # Test database name (different from local)
+          MYSQL_USER: "test_user"               # Test user (different from local)
+          MYSQL_PASSWORD: "testpassword123"     # Test user password (different from local)
         ports:
           - 3306:3306
         options: >-
@@ -28,11 +28,11 @@ jobs:
 
       - name: Set up environment file
         run: |
-          echo "hostname=${{secrets.DB_HOST}}" >> .env
-          echo "username=${{secrets.DB_USER}}" >> .env
-          echo "password=${{secrets.DB_PASSWORD}}" >> .env 
-          echo "database=${{secrets.DB_NAME}}" >> .env        
-          echo "port=${{secrets.DB_PORT}}" >> .env
+          echo "hostname=${{secrets.DB_HOSTS}}" >> .env
+          echo "username=test_user" >> .env       # Different than in local .env
+          echo "password=testpassword123" >> .env # Different than in local .env
+          echo "database=test_db" >> .env         # Different than in local .env
+          echo "port=3306" >> .env
 
       - name: Install dependencies
         run: npm install
