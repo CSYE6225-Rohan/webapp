@@ -10,10 +10,10 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: cloud_computing
-          MYSQL_USER: root
-          MYSQL_PASSWORD: AuzJ7268*
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+          MYSQL_USER: ${{ secrets.DB_USER }}
+          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
         ports:
           - 3306:3306
         options: >-
@@ -28,11 +28,16 @@ jobs:
 
       - name: Set up environment file
         run: |
-          echo "DB_HOST=127.0.0.1" >> .env
-          echo "DB_USER=root" >> .env
-          echo "DB_PASSWORD=AuzJ7268*" >> .env
-          echo "DB_NAME=cloud_computing" >> .env
-          echo "DB_PORT=3306" >> .env
+          echo "hostname=${{ secrets.DB_HOST }}" >> .env
+          echo "username=${{ secrets.DB_USER }}" >> .env
+          echo "password=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "database=${{ secrets.DB_NAME }}" >> .env
+          echo "port=3306" >> .env
+          echo "ubuntu_ip=${{ secrets.UBUNTU_IP }}" >> .env
+          echo "ssh_key=${{ secrets.SSH_KEY }}" >> .env
+          echo "path_of_zip=${{ secrets.PATH_OF_ZIP }}" >> .env
+          echo "path_of_ubuntu_sh=${{ secrets.PATH_OF_UBUNTU_SH }}" >> .env
+          echo "key=${{ secrets.KEY }}" >> .env
 
       - name: Install dependencies
         run: npm install
