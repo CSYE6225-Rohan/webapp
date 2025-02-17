@@ -14,8 +14,7 @@ jobs:
           MYSQL_DATABASE: "${{secrets.DB_NAME}}"             
           MYSQL_USER: "${{secrets.DB_USER}}"               
           MYSQL_PASSWORD: "${{secrets.DB_PASSWORD}}"     
-        ports:
-          - ${{secrets.DB_PORT}}:${{secrets.DB_PORT}}
+          MYSQL_PORT: "${{ secrets.DB_PORT }}"
 
 
     steps:
