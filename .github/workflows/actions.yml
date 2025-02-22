@@ -3,7 +3,7 @@ name: Node.js Tests with MySQL
 on:
   pull_request_target:
     branches:
-      - main  # This ensures the workflow runs only when a PR targets the 'main' branch
+      - main
 
 jobs:
   test:
