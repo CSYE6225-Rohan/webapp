@@ -23,9 +23,9 @@ jobs:
         aws configure set region us-east-1
 
     # Step 3: Install dependencies for the Node.js app
-    - name: Install dependencies
+    - name: Make zip
       run: |
-        npm install  
+        zip -r webapp.zip .  
 
     # Step 4: Run Packer to create EC2 instance (Make sure Packer is installed and configured)
     - name: Initialize packer to create EC2 instance
@@ -40,7 +40,7 @@ jobs:
     # Step 5: Upload Node.js app build to the EC2 instance
     - name: Upload the app build to EC2
       run: |
-        scp -i /${{secrets.PEM_PATH}} -r ./build ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/
+        scp -i /${{secrets.PEM_PATH}} -r ./webapp.zip ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/
 
     # Step 6: SSH into EC2 to configure the system
     - name: SSH into EC2 and configure
@@ -58,6 +58,9 @@ jobs:
           sudo mkdir -p /home/csye6225/app
           sudo cp -r /home/ubuntu/build/* /home/csye6225/app/
           sudo chown -R csye6225:csye6225 /home/csye6225/app
+
+          unzip /home/ubuntu/webapp.zip -d /home/ubuntu/webapp
+          rm /home/ubuntu/webapp.zip
 
           # Create systemd service for the Node.js app
           echo '[Unit]
