@@ -23,7 +23,7 @@ source "amazon-ebs" "aws_custom_image" {
   vpc_id         = "vpc-067e649a2e24be3b0"
   subnet_id      = "subnet-067f64dce030489fb"  # Replace with your subnet ID
   ssh_keypair_name = "ec2_keypair"  # Corrected key pair argument
-  ssh_private_key_file = "/Users/rohanjauhari/Downloads/ec2_keypair.pem"
+  ssh_private_key_file = "ec2_keypair.pem"
   security_group_ids = ["sg-0b4ff83196afd93f1"]  # Corrected security group argument
   associate_public_ip_address = true
 
