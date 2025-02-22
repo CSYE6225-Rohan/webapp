@@ -1,0 +1,91 @@
+name: Deploy Web App on EC2 (AWS) and Run Integration Tests
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  deploy_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Step 2: Set up AWS CLI
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    # Step 3: Install dependencies for the Node.js app
+    - name: Install dependencies
+      run: |
+        npm install  
+        
+    # Step 4: Build the Node.js application
+    - name: Build the Node.js application
+      run: |
+        npm run build  # Adjust if you have a different build command (e.g., `npm run prod`)
+
+    # Step 5: Run Packer to create EC2 instance (Make sure Packer is installed and configured)
+    - name: Run Packer to create EC2 instance
+      run: |
+        packer build aws-custom-image.pkr.hcl
+
+    # Step 6: Upload Node.js app build to the EC2 instance
+    - name: Upload the app build to EC2
+      run: |
+        scp -i /${{secrets.PEM_PATH}} -r ./build ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/
+
+    # Step 7: SSH into EC2 to configure the system
+    - name: SSH into EC2 and configure
+      run: |
+        ssh -i /${{secrets.PEM_PATH}} ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
+          # Create group and user 'csye6225' with no login shell
+          sudo groupadd csye6225
+          sudo useradd -m -g csye6225 -s /usr/sbin/nologin csye6225
+          
+          # Install application dependencies (Node.js, MySQL, etc.)
+          sudo apt update
+          sudo apt install -y mysql-server nodejs npm
+
+          # Set up application directory, copy files, and adjust permissions
+          sudo mkdir -p /home/csye6225/app
+          sudo cp -r /home/ubuntu/build/* /home/csye6225/app/
+          sudo chown -R csye6225:csye6225 /home/csye6225/app
+
+          # Create systemd service for the Node.js app
+          echo '[Unit]
+          Description=CSYE6225 Web Application
+          After=network.target
+
+          [Service]
+          User=csye6225
+          Group=csye6225
+          WorkingDirectory=/home/csye6225/app
+          ExecStart=/usr/bin/node /home/csye6225/app/app.js
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target' | sudo tee /etc/systemd/system/csye6225-app.service
+
+          # Reload systemd and enable the service
+          sudo systemctl daemon-reload
+          sudo systemctl enable csye6225-app.service
+          sudo systemctl start csye6225-app.service
+        EOF
+
+    # Step 8: Run integration tests on EC2
+    - name: Run integration tests
+      run: |
+        ssh -i /${{secrets.PEM_PATH}} ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
+          # Run your integration tests on the app (e.g., using Jest, Mocha)
+          cd /home/csye6225/app
+          npm test 
+        EOF
