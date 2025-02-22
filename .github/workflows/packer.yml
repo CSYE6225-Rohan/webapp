@@ -26,23 +26,18 @@ jobs:
     - name: Install dependencies
       run: |
         npm install  
-        
-    # Step 4: Build the Node.js application
-    - name: Build the Node.js application
-      run: |
-        npm run build  # Adjust if you have a different build command (e.g., `npm run prod`)
 
-    # Step 5: Run Packer to create EC2 instance (Make sure Packer is installed and configured)
+    # Step 4: Run Packer to create EC2 instance (Make sure Packer is installed and configured)
     - name: Run Packer to create EC2 instance
       run: |
         packer build aws-custom-image.pkr.hcl
 
-    # Step 6: Upload Node.js app build to the EC2 instance
+    # Step 5: Upload Node.js app build to the EC2 instance
     - name: Upload the app build to EC2
       run: |
         scp -i /${{secrets.PEM_PATH}} -r ./build ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/
 
-    # Step 7: SSH into EC2 to configure the system
+    # Step 6: SSH into EC2 to configure the system
     - name: SSH into EC2 and configure
       run: |
         ssh -i /${{secrets.PEM_PATH}} ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
@@ -80,7 +75,7 @@ jobs:
           sudo systemctl start csye6225-app.service
         EOF
 
-    # Step 8: Run integration tests on EC2
+    # Step 7: Run integration tests on EC2
     - name: Run integration tests
       run: |
         ssh -i /${{secrets.PEM_PATH}} ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
