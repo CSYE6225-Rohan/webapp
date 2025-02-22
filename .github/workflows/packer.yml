@@ -28,6 +28,11 @@ jobs:
         npm install  
 
     # Step 4: Run Packer to create EC2 instance (Make sure Packer is installed and configured)
+    - name: Initialize packer to create EC2 instance
+      run: |
+        packer init aws-custom-image.pkr.hcl
+
+    # Step 4: Run Packer to create EC2 instance (Make sure Packer is installed and configured)
     - name: Run Packer to create EC2 instance
       run: |
         packer build aws-custom-image.pkr.hcl
