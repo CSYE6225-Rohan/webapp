@@ -24,6 +24,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Format packer file
+        run: |
+          packer fmt
+      
+      - name: Validate packer
+        run: |
+          packer validate
+
       - name: Set up environment file
         run: |
           echo "hostname=${{secrets.DB_HOST}}" >> .env
