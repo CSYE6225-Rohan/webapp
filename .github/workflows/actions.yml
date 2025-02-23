@@ -40,3 +40,9 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Format packer
+        run: packer fmt .
+      
+      - name: Validate packer
+        run: packer validate .
