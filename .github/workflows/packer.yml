@@ -46,8 +46,16 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Set up environment file
+        run: |
+          echo "hostname=${{secrets.DB_HOST}}" >> .env
+          echo "username=${{secrets.DB_USER}}" >> .env
+          echo "password=${{secrets.DB_PASSWORD}}" >> .env 
+          echo "database=${{secrets.DB_NAME}}" >> .env        
+          echo "port=${{secrets.DB_PORT}}" >> .env
+
       - name: Make zip
-        run: zip -r webapp.zip * .gitignore
+        run: zip -r webapp.zip .
 
     # Step 2: Set up AWS CLI
       - name: Set up AWS CLI

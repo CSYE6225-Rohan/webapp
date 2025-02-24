@@ -42,7 +42,7 @@ jobs:
         run: npm test
 
       - name: Make zip
-        run: zip -r webapp.zip * .gitignore
+        run: zip -r webapp.zip .
 
       - name: Initialize packer
         run: packer init .
