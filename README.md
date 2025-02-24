@@ -28,7 +28,7 @@ npm test
 Continous Integration:
 On creating a pull request to main branch, npm test will happen as it has been added in github workflows. Credentials can be set in github secrets in repo secrets
 
-Creating packer for creation of custom ubuntu ami on default vpc and csye6225.service systemd service
+Creating packer for creation of custom ubuntu ami on default vpc and csye6225.service systemd service which reinitializes the web app if it shuts
 
 The packer can be run using: packer build aws-custom-image.pkr.hcl     
 

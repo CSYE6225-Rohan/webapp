@@ -9,23 +9,23 @@ packer {
 }
 
 # Define AWS credentials and database details as variables
-variable "aws_access_key" {}
-variable "aws_secret_key" {}
+variable "aws_access_key" { default = "" }
+variable "aws_secret_key" {default = ""}
 variable "aws_region" {
   default = "us-east-1"
 }
-variable "db_host" {}
-variable "db_root_password" {}
-variable "db_user" {}
-variable "db_password" {}
-variable "db_name" {}
+variable "db_host" {default = ""}
+variable "db_root_password" {default = ""}
+variable "db_user" {default = ""}
+variable "db_password" {default = ""}
+variable "db_name" {default = ""}
 variable "db_port" {
   default = "3306"
 }
 
 source "amazon-ebs" "aws_custom_image" {
-  access_key                  = var.AWS_ACCESS_KEY_ID
-  secret_key                  = var.AWS_SECRET_ACCESS_KEY
+  access_key                  = var.aws_access_key
+  secret_key                  = var.aws_secret_key
   region                      = var.aws_region
   source_ami                  = "ami-04b4f1a9cf54c11d0"
   instance_type               = "t2.micro"
@@ -53,8 +53,8 @@ build {
 
   # Copy application artifacts to the instance
   provisioner "file" {
-    source      = "./webapp.zip"        # Your local webapp.zip
-    destination = "/home/ubuntu/webapp.zip"  # Ensure correct destination
+    source      = "./webapp.zip"            # Your local webapp.zip
+    destination = "/home/ubuntu/webapp.zip" # Ensure correct destination
   }
 
   # Provision MySQL, Node.js, and setup
@@ -70,12 +70,12 @@ build {
       "sudo apt-get install mysql-server -y",
       "sudo apt-get install unzip -y",
       "sudo apt-get install npm -y",
-      
+
       #change authentication method from auth_socket to native password
-      "sudo mysql -u root -p'${var.DB_ROOT_PASSWORD}' -e \"ALTER USER '${var.DB_USER}'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.DB_PASSWORD}';\"",
+      "sudo mysql -u root -p'${var.db_root_password}' -e \"ALTER USER '${var.db_user}'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.db_password}';\"",
       #Create the database in the RDBMS.
 
-      "mysql -u root -p'${var.DB_ROOT_PASSWORD}' -e \"CREATE DATABASE ${var.DB_NAME};\"",
+      "mysql -u root -p'${var.db_root_password}' -e \"CREATE DATABASE ${var.db_name};\"",
 
       # Making csye6225 repo
       "sudo mkdir /opt/csye6225/",
@@ -89,12 +89,12 @@ build {
 
       # Change ownership of the application files
       "sudo chown -R csye6225:csye6225 /opt/csye6225/",
-      
+
       #going into webapp directory
       "cd /opt/csye6225/webapp",
 
       # Install dependencies
-      "sudo npm install", 
+      "sudo npm install",
 
       # Create a systemd service file
       "echo '[Unit]\\nDescription=CSYE 6225 App\\nConditionPathExists=/opt/application.properties\\nAfter=network.target\\n\\n[Service]\\nType=simple\\nUser=csye6225\\nGroup=csye6225\\nWorkingDirectory=/opt/csye6225/webapp\\nExecStart=/usr/bin/node /opt/csye6225/webapp/app.js\\nRestart=always\\nRestartSec=3\\nStandardOutput=syslog\\nStandardError=syslog\\nSyslogIdentifier=csye6225\\n\\n[Install]\\nWantedBy=multi-user.target' | sudo tee /etc/systemd/system/csye6225.service > /dev/null",
