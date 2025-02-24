@@ -53,7 +53,6 @@ build {
 
     inline = [
       # Update the package list
-      "sleep 6000",
       "sudo apt-get update",
 
       # Install required packages
@@ -63,10 +62,10 @@ build {
       "sudo apt-get install npm -y",
       
       #change authentication method from auth_socket to native password
-      sudo mysql -u root -p"2402" -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'AuzJ7268*';"
-
+      "sudo mysql -u root -p'AuzJ7268*' -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'AuzJ7268*';\"",
       #Create the database in the RDBMS.
-      mysql -u root -p"2402" -e "CREATE DATABASE cloud_computing;"
+
+      "mysql -u root -p'AuzJ7268*' -e \"CREATE DATABASE cloud_computing;\"",
 
       # Making csye6225 repo
       "sudo mkdir /opt/csye6225/",
@@ -80,33 +79,15 @@ build {
 
       # Change ownership of the application files
       "sudo chown -R csye6225:csye6225 /opt/csye6225/",
-
-      # Navigate to the webapp directory
-      "cd /opt/csye6225/webapp",
       
+      #going into webapp directory
+      "cd /opt/csye6225/webapp",
+
       # Install dependencies
       "sudo npm install", 
 
       # Create a systemd service file
-      "echo '[Unit]
-      Description=CSYE 6225 App
-      ConditionPathExists=/opt/application.properties
-      After=network.target
-
-      [Service]
-      Type=simple
-      User=csye6225
-      Group=csye6225
-      WorkingDirectory=/opt/csye6225/webapp
-      ExecStart=/usr/bin/node /opt/csye6225/webapp/app.js
-      Restart=always
-      RestartSec=3
-      StandardOutput=syslog
-      StandardError=syslog
-      SyslogIdentifier=csye6225
-
-      [Install]
-      WantedBy=multi-user.target' | sudo tee /etc/systemd/system/csye6225.service > /dev/null"
+      "echo '[Unit]\\nDescription=CSYE 6225 App\\nConditionPathExists=/opt/application.properties\\nAfter=network.target\\n\\n[Service]\\nType=simple\\nUser=csye6225\\nGroup=csye6225\\nWorkingDirectory=/opt/csye6225/webapp\\nExecStart=/usr/bin/node /opt/csye6225/webapp/app.js\\nRestart=always\\nRestartSec=3\\nStandardOutput=syslog\\nStandardError=syslog\\nSyslogIdentifier=csye6225\\n\\n[Install]\\nWantedBy=multi-user.target' | sudo tee /etc/systemd/system/csye6225.service > /dev/null",
 
       # Reload systemd to recognize the new service
       "sudo systemctl daemon-reload",
