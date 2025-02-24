@@ -9,23 +9,40 @@ packer {
 }
 
 # Define AWS credentials and database details as variables
-variable "aws_access_key" { default = "" }
-variable "aws_secret_key" {default = ""}
+# variable "aws_access_key" { default = "" }
+# variable "aws_secret_key" {default = ""}
 variable "aws_region" {
   default = "us-east-1"
 }
-variable "db_host" {default = ""}
-variable "db_root_password" {default = ""}
-variable "db_user" {default = ""}
-variable "db_password" {default = ""}
-variable "db_name" {default = ""}
+
+variable "db_host" {
+  default = "localhost"
+}
+
+variable "db_root_password" {
+  description = "The root password for MySQL"
+  type        = string
+}
+
+variable "db_user" {
+  default = "rohan"
+}
+
+variable "db_password" {
+  description = "The root password for MySQL"
+  type        = string
+}
+
+variable "db_name" {
+  default = "mydatabase"
+}
+
 variable "db_port" {
   default = "3306"
 }
-
 source "amazon-ebs" "aws_custom_image" {
-  access_key                  = var.aws_access_key
-  secret_key                  = var.aws_secret_key
+  # access_key                  = var.aws_access_key
+  # secret_key                  = var.aws_secret_key
   region                      = var.aws_region
   source_ami                  = "ami-04b4f1a9cf54c11d0"
   instance_type               = "t2.micro"
@@ -72,7 +89,7 @@ build {
       "sudo apt-get install npm -y",
 
       #change authentication method from auth_socket to native password
-      "sudo mysql -u root -p'${var.db_root_password}' -e \"ALTER USER '${var.db_user}'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.db_password}';\"",
+      "sudo mysql -u root -p'${var.db_root_password}' -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.db_root_password}';\"",
       #Create the database in the RDBMS.
 
       "mysql -u root -p'${var.db_root_password}' -e \"CREATE DATABASE ${var.db_name};\"",
