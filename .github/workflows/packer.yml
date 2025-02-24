@@ -22,6 +22,7 @@ jobs:
           - 3306:3306
 
     steps:
+    # Step 1: Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -48,20 +49,24 @@ jobs:
       - name: Make zip
         run: zip -r webapp.zip .
 
+    # Step 2: Set up AWS CLI
       - name: Set up AWS CLI
         run: |
           aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
           aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
           aws configure set region us-east-1
 
+      # Step 3: Initialize packer
       - name: Initialize packer to create EC2 instance
         run: |
           packer init .
 
+      # Step 4: Validate packer
       - name: Validate packer to create EC2 instance
         run: |
           packer validate .
 
+      # Step 5: Building packer
       - name: Run Packer to create EC2 instance
         run: |
           packer build \
