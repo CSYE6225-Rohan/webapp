@@ -40,3 +40,15 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Make zip
+        run: zip -r webapp.zip .
+
+      - name: Initialize packer
+        run: packer init .
+
+      - name: Format packer
+        run: packer fmt .
+      
+      - name: Validate packer
+        run: packer validate .

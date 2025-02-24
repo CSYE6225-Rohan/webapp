@@ -1,0 +1,84 @@
+name: Deploy Web App on EC2 (AWS) and Run Integration Tests
+
+on:
+  pull_request_target:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  deploy_and_test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: "${{secrets.DB_ROOT_PASSWORD}}" 
+          MYSQL_DATABASE: "${{secrets.DB_NAME}}"             
+          MYSQL_USER: "${{secrets.DB_USER}}"               
+          MYSQL_PASSWORD: "${{secrets.DB_PASSWORD}}"     
+        ports:
+          - 3306:3306
+
+    steps:
+    # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up environment file
+        run: |
+          echo "hostname=${{secrets.DB_HOST}}" >> .env
+          echo "username=${{secrets.DB_USER}}" >> .env
+          echo "password=${{secrets.DB_PASSWORD}}" >> .env 
+          echo "database=${{secrets.DB_NAME}}" >> .env        
+          echo "port=${{secrets.DB_PORT}}" >> .env
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Wait for MySQL to be ready
+        run: sleep 20
+
+      - name: Run tests
+        run: npm test
+
+      - name: Make zip
+        run: zip -r webapp.zip .
+
+      - name: show secrets
+        run: |
+          echo ${{ secrets.AWS_ACCESS_KEY_ID }}
+          echo ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    # Step 2: Set up AWS CLI
+      - name: Set up AWS CLI
+        run: |
+          aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          aws configure set region us-east-1
+
+      # Step 3: Initialize packer
+      - name: Initialize packer to create EC2 instance
+        run: |
+          packer init .
+
+      # Step 4: Validate packer
+      - name: Validate packer to create EC2 instance
+        run: |
+          packer validate .
+
+      # Step 5: Building packer
+      - name: Run Packer to create EC2 instance
+        run: |
+          packer build \
+          -var "aws_region=${{secrets.AWS_REGION}}" \
+          -var "db_host=${{secrets.DB_HOST}}" \
+          -var "db_user=${{secrets.DB_USER}}" \
+          -var "db_password=${{secrets.DB_PASSWORD}}" \
+          -var "db_root_password=${{secrets.DB_ROOT_PASSWORD}}"
+          -var "db_port=${{secrets.DB_PORT}}" \
+          aws-custom-image.pkr.hcl
