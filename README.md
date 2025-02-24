@@ -31,3 +31,5 @@ On creating a pull request to main branch, npm test will happen as it has been a
 Creating packer for creation of custom ubuntu ami on default vpc
 
 The packer can be run using: packer build aws-custom-image.pkr.hcl     
+
+packer.yml runs when pull request is merged and conducts integration tests
