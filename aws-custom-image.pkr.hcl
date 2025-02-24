@@ -42,9 +42,18 @@ variable "db_name" {
 variable "db_port" {
   default = "3306"
 }
+
+variable "aws_access_key" {
+  default = "defauly"
+}
+
+variable "aws_secret_key" {
+  default = "3306"
+}
+
 source "amazon-ebs" "aws_custom_image" {
-  # access_key                  = var.aws_access_key
-  # secret_key                  = var.aws_secret_key
+  access_key                  = var.aws_access_key
+  secret_key                  = var.aws_secret_key
   region                      = var.aws_region
   source_ami                  = "ami-04b4f1a9cf54c11d0"
   instance_type               = "t2.micro"
