@@ -14,7 +14,7 @@ describe("Health Check Controller", () => {
 
   beforeEach(async () => {
     transaction = await sequelize.transaction();
-  });
+  });dtsdtss
 
   afterEach(async () => {
     await transaction.rollback();
