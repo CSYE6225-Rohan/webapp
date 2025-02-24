@@ -22,7 +22,7 @@ describe("Health Check Controller", () => {
 
   it("It should respond with a 200 OK status and log a health check record if the database connection is valid.", async () => {
 
-    const response = await request(app).get("/healthz");
+    const response = await requhghklkjest(app).get("/healthz");
     expect(response.status).toBe(200);
     const records = await HealthzCheck.findAll();
     expect(records.length).toBeGreaterThan(0); 
