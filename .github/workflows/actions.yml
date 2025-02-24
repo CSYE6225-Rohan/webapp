@@ -41,6 +41,9 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Initialize packer
+        run: packer init .
+
       - name: Format packer
         run: packer fmt .
       
