@@ -59,12 +59,13 @@ jobs:
       # Step 4: Run Packer to create EC2 instance (Make sure Packer is installed and configured)
       - name: Initialize packer to create EC2 instance
         run: |
-          packer init aws-custom-image.pkr.hcl
+          packer init .
 
       # Step 4: Run Packer to create EC2 instance (Make sure Packer is installed and configured)
       - name: Run Packer to create EC2 instance
         run: |
-          packer build -var "aws_access_key=$AWS_ACCESS_KEY_ID" \
+          packer build 
+             -var "aws_access_key=$AWS_ACCESS_KEY_ID" \
              -var "aws_secret_key=$AWS_SECRET_ACCESS_KEY" \
              -var "aws_region=$AWS_REGION" \
              -var "db_host=$DB_HOST" \

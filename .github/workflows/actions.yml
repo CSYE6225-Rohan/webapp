@@ -51,4 +51,12 @@ jobs:
         run: packer fmt .
       
       - name: Validate packer
-        run: packer validate .
+        run: packer validate 
+             -var "aws_access_key=${{secrets.AWS_ACCESS_KEY_ID}}" \
+             -var "aws_secret_key=${{secrets.AWS_SECRET_ACCESS_KEY}}" \
+             -var "aws_region=${{secrets.AWS_REGION}}" \
+             -var "db_host=${{secrets.DB_HOST}}" \
+             -var "db_user=${{secrets.DB_USER}}" \
+             -var "db_password=${{secrets.DB_PASSWORD}}" \
+             -var "db_port=${{secrets.DB_PORT}}" \
+             aws-custom-image.pkr.hcl .
