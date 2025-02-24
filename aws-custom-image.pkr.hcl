@@ -22,6 +22,7 @@ variable "db_host" {
 variable "db_root_password" {
   description = "The root password for MySQL"
   type        = string
+  default     = "default" #don mention your password here
 }
 
 variable "db_user" {
@@ -31,6 +32,7 @@ variable "db_user" {
 variable "db_password" {
   description = "The root password for MySQL"
   type        = string
+  default     = "default" #dont mention your password here
 }
 
 variable "db_name" {
