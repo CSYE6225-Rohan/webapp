@@ -27,3 +27,5 @@ npm test
 
 Continous Integration:
 On creating a pull request to main branch, npm test will happen as it has been added in github workflows. Credentials can be set in github secrets in repo secrets
+
+Creating packer for creation of custom ubuntu ami on default vpc
