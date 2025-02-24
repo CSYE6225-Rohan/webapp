@@ -8,14 +8,24 @@ packer {
   }
 }
 
-# Define AWS region as a variable
+# Define AWS credentials and database details as variables
+variable "aws_access_key" {}
+variable "aws_secret_key" {}
 variable "aws_region" {
   default = "us-east-1"
 }
 
+variable "db_root_password" {}
+variable "db_user" {}
+variable "db_password" {}
+variable "db_name" {}
+variable "db_port" {
+  default = "3306"
+}
+
 source "amazon-ebs" "aws_custom_image" {
-  access_key                  = "${{ secrets.AWS_ACCESS_KEY_ID }}"
-  secret_key                  = "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+  access_key                  = var.AWS_ACCESS_KEY_ID
+  secret_key                  = var.AWS_SECRET_ACCESS_KEY
   region                      = var.aws_region
   source_ami                  = "ami-04b4f1a9cf54c11d0"
   instance_type               = "t2.micro"
@@ -62,10 +72,10 @@ build {
       "sudo apt-get install npm -y",
       
       #change authentication method from auth_socket to native password
-      "sudo mysql -u root -p'${{secrets.DB_ROOT_PASSWORD}}' -e \"ALTER USER '${{secrets.DB_USER}}'@'localhost' IDENTIFIED WITH mysql_native_password BY '${{secrets.DB_PASSWORD}}';\"",
+      "sudo mysql -u root -p'${var.DB_ROOT_PASSWORD}' -e \"ALTER USER '${var.DB_USER}'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.DB_PASSWORD}';\"",
       #Create the database in the RDBMS.
 
-      "mysql -u root -p'${{secrets.DB_ROOT_PASSWORD}}' -e \"CREATE DATABASE ${{secrets.DB_NAME}};\"",
+      "mysql -u root -p'${var.DB_ROOT_PASSWORD}' -e \"CREATE DATABASE ${var.DB_NAME};\"",
 
       # Making csye6225 repo
       "sudo mkdir /opt/csye6225/",

@@ -46,14 +46,6 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Set up environment file
-        run: |
-          echo "hostname=${{secrets.DB_HOST}}" >> .env
-          echo "username=${{secrets.DB_USER}}" >> .env
-          echo "password=${{secrets.DB_PASSWORD}}" >> .env 
-          echo "database=${{secrets.DB_NAME}}" >> .env        
-          echo "port=${{secrets.DB_PORT}}" >> .env
-
       - name: Make zip
         run: zip -r webapp.zip .
 
@@ -72,4 +64,11 @@ jobs:
       # Step 4: Run Packer to create EC2 instance (Make sure Packer is installed and configured)
       - name: Run Packer to create EC2 instance
         run: |
-          packer build aws-custom-image.pkr.hcl
+          packer build -var "aws_access_key=$AWS_ACCESS_KEY_ID" \
+             -var "aws_secret_key=$AWS_SECRET_ACCESS_KEY" \
+             -var "aws_region=$AWS_REGION" \
+             -var "db_host=$DB_HOST" \
+             -var "db_user=$DB_USER" \
+             -var "db_password=$DB_PASSWORD" \
+             -var "db_port=$DB_PORT" \
+             aws-custom-image.pkr.hcl
