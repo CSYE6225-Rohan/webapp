@@ -43,8 +43,8 @@ build {
 
   # Copy application artifacts to the instance
   provisioner "file" {
-    source      = "./webapp.zip"        # Your local webapp.zip
-    destination = "/home/ubuntu/webapp.zip"  # Ensure correct destination
+    source      = "./webapp.zip"            # Your local webapp.zip
+    destination = "/home/ubuntu/webapp.zip" # Ensure correct destination
   }
 
   # Provision MySQL, Node.js, and setup
@@ -60,7 +60,7 @@ build {
       "sudo apt-get install mysql-server -y",
       "sudo apt-get install unzip -y",
       "sudo apt-get install npm -y",
-      
+
       #change authentication method from auth_socket to native password
       "sudo mysql -u root -p'AuzJ7268*' -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'AuzJ7268*';\"",
       #Create the database in the RDBMS.
@@ -79,12 +79,12 @@ build {
 
       # Change ownership of the application files
       "sudo chown -R csye6225:csye6225 /opt/csye6225/",
-      
+
       #going into webapp directory
       "cd /opt/csye6225/webapp",
 
       # Install dependencies
-      "sudo npm install", 
+      "sudo npm install",
 
       # Create a systemd service file
       "echo '[Unit]\\nDescription=CSYE 6225 App\\nConditionPathExists=/opt/application.properties\\nAfter=network.target\\n\\n[Service]\\nType=simple\\nUser=csye6225\\nGroup=csye6225\\nWorkingDirectory=/opt/csye6225/webapp\\nExecStart=/usr/bin/node /opt/csye6225/webapp/app.js\\nRestart=always\\nRestartSec=3\\nStandardOutput=syslog\\nStandardError=syslog\\nSyslogIdentifier=csye6225\\n\\n[Install]\\nWantedBy=multi-user.target' | sudo tee /etc/systemd/system/csye6225.service > /dev/null",
