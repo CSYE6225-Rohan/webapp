@@ -47,7 +47,7 @@ jobs:
         run: npm test
 
       - name: Make zip
-        run: zip -r webapp.zip .
+        run: zip -r webapp.zip * .gitignore
 
     # Step 2: Set up AWS CLI
       - name: Set up AWS CLI
