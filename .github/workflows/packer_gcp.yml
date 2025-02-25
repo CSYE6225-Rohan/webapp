@@ -1,0 +1,36 @@
+name: Deploy Web App and Run Tests
+
+on:
+  pull_request_target:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  deploy_and_test_aws:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Google Cloud SDK and authenticate with service account
+      - name: Authenticate to Google Cloud
+        run: |
+          echo "${{ secrets.GCP_CREDENTIALS_JSON }}" > $HOME/gcloud-key.json
+          gcloud auth activate-service-account --key-file=$HOME/gcloud-key.json
+          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+
+      # Step 3: Run GCP-related commands (e.g., Packer, Terraform, etc.)
+      - name: Run GCP Packer build
+        run: |
+          packer build \
+            -var "gcp_project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -var "db_host=${{ secrets.DB_HOST }}" \
+            -var "db_user=${{ secrets.DB_USER }}" \
+            -var "db_password=${{ secrets.DB_PASSWORD }}" \
+            -var "db_root_password=${{ secrets.DB_ROOT_PASSWORD }}" \
+            -var "db_name=${{ secrets.DB_NAME }}" \
+            -var "db_port=${{ secrets.DB_PORT }}" \
+            gcp-custom-image.pkr.hcl
