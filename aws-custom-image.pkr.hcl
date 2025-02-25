@@ -8,9 +8,6 @@ packer {
   }
 }
 
-# Define AWS credentials and database details as variables
-# variable "aws_access_key" { default = "" }
-# variable "aws_secret_key" {default = ""}
 variable "aws_region" {
   default = "us-east-1"
 }
@@ -43,18 +40,16 @@ variable "db_port" {
   default = "3306"
 }
 source "amazon-ebs" "aws_custom_image" {
-  # access_key                  = var.aws_access_key
-  # secret_key                  = var.aws_secret_key
   region                      = var.aws_region
   source_ami                  = "ami-04b4f1a9cf54c11d0"
   instance_type               = "t2.micro"
   ssh_username                = "ubuntu"
   ami_name                    = "custom-ubuntu-24.04-ami-{{timestamp}}"
-  vpc_id                      = "vpc-067e649a2e24be3b0"
-  subnet_id                   = "subnet-067f64dce030489fb"
-  ssh_keypair_name            = "ec2_keypair"
-  ssh_private_key_file        = "./ec2_keypair.pem"
-  security_group_ids          = ["sg-0b4ff83196afd93f1"]
+  # vpc_id                      = "vpc-067e649a2e24be3b0"
+  # subnet_id                   = "subnet-067f64dce030489fb"
+  # ssh_keypair_name            = "ec2_keypair"
+  # ssh_private_key_file        = "./ec2_keypair.pem"
+  # security_group_ids          = ["sg-0b4ff83196afd93f1"]
   associate_public_ip_address = true
 
   # Ensuring the image is private
@@ -78,7 +73,6 @@ build {
 
   # Provision MySQL, Node.js, and setup
   provisioner "shell" {
-    environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
 
     inline = [
       # Update the package list
