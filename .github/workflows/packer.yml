@@ -33,7 +33,7 @@ jobs:
         run: |
           echo "hostname=${{secrets.DB_HOST}}" >> .env
           echo "username=${{secrets.DB_USER}}" >> .env
-          echo "password=${{secrets.DB_PASSWORD}}" >> .env 
+          echo "password=${{secrets.DB_ROOT_PASSWORD}}" >> .env 
           echo "database=${{secrets.DB_NAME}}" >> .env        
           echo "port=${{secrets.DB_PORT}}" >> .env
 
