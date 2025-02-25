@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  deploy_and_test_aws:
+  deploy_and_test_gcp:
     runs-on: ubuntu-latest
 
     steps:

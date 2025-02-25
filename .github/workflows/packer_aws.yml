@@ -61,6 +61,9 @@ jobs:
           aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
           aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
           aws configure set region us-east-1
+        
+      - name: Install gcloud for packer
+        run: "packer plugins install github.com/hashicorp/googlecompute"
 
       # Step 3: Initialize packer
       - name: Initialize packer to create EC2 instance
@@ -84,3 +87,4 @@ jobs:
           -var "db_name=${{secrets.DB_NAME}}" \
           -var "db_port=${{secrets.DB_PORT}}" \
           aws-custom-image.pkr.hcl
+
