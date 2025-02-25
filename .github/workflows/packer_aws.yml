@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  deploy_and_test:
+  deploy_and_test_aws:
     runs-on: ubuntu-latest
 
     services:
