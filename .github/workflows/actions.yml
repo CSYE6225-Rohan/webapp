@@ -45,6 +45,9 @@ jobs:
       - name: Make zip
         run: zip -r webapp.zip .
 
+      - name: Install gcloud for packer
+        run: "packer plugins install github.com/hashicorp/googlecompute"
+        
       - name: Initialize packer
         run: packer init .
 
