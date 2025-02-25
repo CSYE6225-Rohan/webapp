@@ -17,13 +17,13 @@ variable "zone" {
 source "googlecompute" "ubuntu" {
   project_id           = var.project_id
   source_image_family  = "ubuntu-2404-lts"
-  source_image_project = "ubuntu-os-cloud"
   machine_type         = var.machine_type
   zone                 = var.zone
   image_name           = var.image_name
   image_family         = "custom-ubuntu"
   image_description    = "Custom Ubuntu 24.04 LTS Image"
   disk_size            = "10"
+  ssh_username         = "packer"
 }
 
 build {

@@ -40,11 +40,11 @@ variable "db_port" {
   default = "3306"
 }
 source "amazon-ebs" "aws_custom_image" {
-  region                      = var.aws_region
-  source_ami                  = "ami-04b4f1a9cf54c11d0"
-  instance_type               = "t2.micro"
-  ssh_username                = "ubuntu"
-  ami_name                    = "custom-ubuntu-24.04-ami-{{timestamp}}"
+  region        = var.aws_region
+  source_ami    = "ami-04b4f1a9cf54c11d0"
+  instance_type = "t2.micro"
+  ssh_username  = "ubuntu"
+  ami_name      = "custom-ubuntu-24.04-ami-{{timestamp}}"
   # vpc_id                      = "vpc-067e649a2e24be3b0"
   # subnet_id                   = "subnet-067f64dce030489fb"
   # ssh_keypair_name            = "ec2_keypair"
