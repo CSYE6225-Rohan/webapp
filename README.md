@@ -41,3 +41,4 @@ packer build \
 
 packer.yml runs when pull request is merged and conducts integration tests
 
+test
