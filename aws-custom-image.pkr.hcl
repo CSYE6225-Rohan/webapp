@@ -82,6 +82,7 @@ build {
 
     inline = [
       # Update the package list
+      "DEBIAN_FRONTEND=noninteractive",
       "sudo apt-get update",
 
       # Install required packages
