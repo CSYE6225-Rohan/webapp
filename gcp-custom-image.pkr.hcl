@@ -1,4 +1,4 @@
-variable "project_id" {
+variable "gcp_project_id" {
   default = "dev-project-452005"
 }
 
@@ -14,20 +14,57 @@ variable "zone" {
   default = "us-central1-a"
 }
 
+variable "db_name" {
+  type    = string
+  default = "your-database-name"
+}
+
+variable "db_port" {
+  type    = number
+  default = 3306
+}
+
+variable "db_host" {
+  type    = string
+  default = "your-database-host"
+}
+
+variable "db_user" {
+  type    = string
+  default = "your-database-user"
+}
+
+variable "db_password" {
+  type    = string
+  default = "your-database-password"
+}
+
+variable "db_root_password" {
+  type    = string
+  default = "your-root-password"
+}
+
 source "googlecompute" "ubuntu" {
-  project_id           = var.project_id
-  source_image_family  = "ubuntu-2404-lts"
-  machine_type         = var.machine_type
-  zone                 = var.zone
-  image_name           = var.image_name
-  image_family         = "custom-ubuntu"
-  image_description    = "Custom Ubuntu 24.04 LTS Image"
-  disk_size            = "10"
-  ssh_username         = "packer"
+  project_id          = var.gcp_project_id
+  source_image_family = "ubuntu-2404-lts"                   # Correct source image family
+  source_image        = "ubuntu-2404-noble-amd64-v20250214" # Correct image name if needed
+  machine_type        = var.machine_type
+  zone                = var.zone
+  image_name          = var.image_name
+  image_family        = "custom-ubuntu"
+  image_description   = "Custom Ubuntu 24.04 LTS Image"
+  disk_size           = 10
+  ssh_username        = "packer"
 }
 
 build {
   sources = ["source.googlecompute.ubuntu"]
+  # Copy application artifacts to the instance
+  provisioner "file" {
+    source      = "./webapp.zip"
+    destination = "/home/ubuntu/webapp.zip"
+  }
+
 
   provisioner "shell" {
     inline = [
@@ -41,16 +78,16 @@ build {
       "sudo apt-get install unzip -y",
       "sudo apt-get install npm -y",
 
-      #change authentication method from auth_socket to native password
+      # Change authentication method from auth_socket to native password
       "sudo mysql -u root -p'${var.db_root_password}' -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.db_root_password}';\"",
-      #Create the database in the RDBMS.
 
+      # Create the database in the RDBMS
       "mysql -u root -p'${var.db_root_password}' -e \"CREATE DATABASE ${var.db_name};\"",
 
-      # Making csye6225 repo
-      "sudo mkdir /opt/csye6225/",
+      # Create directory for app files
+      "sudo mkdir -p /opt/csye6225/",
 
-      # Unzip the application files
+      # Unzip the application files (Ensure 'webapp.zip' is available on the build machine)
       "sudo unzip /home/ubuntu/webapp.zip -d /opt/csye6225/webapp",
 
       # Create the user and group
@@ -60,10 +97,10 @@ build {
       # Change ownership of the application files
       "sudo chown -R csye6225:csye6225 /opt/csye6225/",
 
-      #going into webapp directory
+      # Navigate into the webapp directory
       "cd /opt/csye6225/webapp",
 
-      # Install dependencies
+      # Install application dependencies
       "sudo npm install",
 
       # Create a systemd service file
