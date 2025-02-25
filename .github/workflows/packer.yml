@@ -32,7 +32,7 @@ jobs:
       - name: Set up environment file
         run: |
           echo "hostname=${{secrets.DB_HOST}}" >> .env
-          echo "username=${{secrets.DB_USER}}" >> .env
+          echo "username=root" >> .env
           echo "password=${{secrets.DB_ROOT_PASSWORD}}" >> .env 
           echo "database=${{secrets.DB_NAME}}" >> .env        
           echo "port=${{secrets.DB_PORT}}" >> .env
