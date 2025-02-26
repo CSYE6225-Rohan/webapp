@@ -8,37 +8,6 @@ packer {
   }
 }
 
-variable "aws_region" {
-  default = "us-east-1"
-}
-
-variable "db_host" {
-  default = "localhost"
-}
-
-variable "db_root_password" {
-  description = "The root password for MySQL"
-  type        = string
-  default     = "default" #don mention your password here
-}
-
-variable "db_user" {
-  default = "rohan"
-}
-
-variable "db_password" {
-  description = "The root password for MySQL"
-  type        = string
-  default     = "default" #dont mention your password here
-}
-
-variable "db_name" {
-  default = "mydatabase"
-}
-
-variable "db_port" {
-  default = "3306"
-}
 source "amazon-ebs" "aws_custom_image" {
   region        = var.aws_region
   source_ami    = "ami-04b4f1a9cf54c11d0"
