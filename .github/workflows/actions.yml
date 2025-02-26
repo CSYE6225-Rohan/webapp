@@ -28,7 +28,7 @@ jobs:
         run: |
           echo "hostname=localhost" >> .env
           echo "username=root" >> .env
-          echo "password=testpassword" >> .env 
+          echo "password=rootpassword" >> .env 
           echo "database=testdb" >> .env        
           echo "port=3306" >> .env
 
