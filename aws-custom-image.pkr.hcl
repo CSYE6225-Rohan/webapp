@@ -46,7 +46,7 @@ source "amazon-ebs" "aws_custom_image" {
   region        = var.aws_region
   source_ami    = var.aws_source_ami
   instance_type = var.aws_instance_type
-  ssh_username  = var.ssh_username
+  ssh_username  = var.aws_ssh_username
   ami_name      = var.aws_ami_name
   associate_public_ip_address = true
 
