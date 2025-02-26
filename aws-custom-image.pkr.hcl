@@ -67,8 +67,8 @@ build {
 
   # Copy application artifacts to the instance
   provisioner "file" {
-    source      = "./webapp.zip"            # Your local webapp.zip
-    destination = "/home/ubuntu/webapp.zip" # Ensure correct destination
+    source      = "./webapp.zip"
+    destination = "/home/ubuntu/webapp.zip"
   }
 
   # Provision MySQL, Node.js, and setup
