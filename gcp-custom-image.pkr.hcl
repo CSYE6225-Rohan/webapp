@@ -46,8 +46,8 @@ variable "db_root_password" {
 
 source "googlecompute" "ubuntu" {
   project_id          = var.gcp_project_id
-  source_image_family = "ubuntu-2404-lts"                   # Correct source image family
-  source_image        = "ubuntu-2404-noble-amd64-v20250214" # Correct image name if needed
+  source_image_family = "ubuntu-2404-lts"
+  source_image        = "ubuntu-2404-noble-amd64-v20250214"
   machine_type        = var.machine_type
   zone                = var.zone
   image_name          = var.image_name
