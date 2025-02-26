@@ -50,8 +50,11 @@ jobs:
 
       # Step 2: Set up Google Cloud SDK and authenticate with service account
       - name: Set up Google Cloud credentials
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS_JSON }}
         run: |
-          gcloud auth activate-service-account --key-file=./dev-project-452005-20d957812df8.json
+          echo "${GOOGLE_APPLICATION_CREDENTIALS}" > ${HOME}/gcloud-key.json
+          gcloud auth activate-service-account --key-file=${HOME}/gcloud-key.json
 
       - name: Enablement
         run: gcloud services enable compute.googleapis.com --project=dev-project-452005
@@ -62,6 +65,7 @@ jobs:
       # Step 3: Run GCP-related commands (e.g., Packer, Terraform, etc.)
       - name: Run GCP Packer build
         run: |
+          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud-key.json
           packer build \
             -var "gcp_project_id=${{ secrets.GCP_PROJECT_ID }}" \
             -var "db_root_password=${{ secrets.DB_ROOT_PASSWORD }}" \
