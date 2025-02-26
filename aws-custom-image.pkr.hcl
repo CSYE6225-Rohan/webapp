@@ -55,9 +55,6 @@ source "amazon-ebs" "aws_custom_image" {
   ami_users     = var.aws_shared_users
   associate_public_ip_address = true
 
-  # Ensuring the image is private
-  ami_users = []
-
   # Tags to apply to the created AMI
   tags = {
     Name = "Packer AMI"
