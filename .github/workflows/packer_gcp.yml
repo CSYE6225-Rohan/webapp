@@ -63,10 +63,6 @@ jobs:
         run: |
           packer build \
             -var "gcp_project_id=${{ secrets.GCP_PROJECT_ID }}" \
-            -var "db_host=${{ secrets.DB_HOST }}" \
-            -var "db_user=${{ secrets.DB_USER }}" \
-            -var "db_password=${{ secrets.DB_PASSWORD }}" \
             -var "db_root_password=${{ secrets.DB_ROOT_PASSWORD }}" \
             -var "db_name=${{ secrets.DB_NAME }}" \
-            -var "db_port=${{ secrets.DB_PORT }}" \
             gcp-custom-image.pkr.hcl
