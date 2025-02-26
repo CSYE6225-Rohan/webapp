@@ -32,6 +32,10 @@ variable "aws_ssh_username" {
   default = "ubuntu"
 }
 
+variable "aws_shared_users"{
+  type   = list(string)
+  default = ["273354624515"]
+}
 
 packer {
   required_plugins {
@@ -48,10 +52,8 @@ source "amazon-ebs" "aws_custom_image" {
   instance_type = var.aws_instance_type
   ssh_username  = var.aws_ssh_username
   ami_name      = var.aws_ami_name
+  ami_users     = var.aws_shared_users
   associate_public_ip_address = true
-
-  # Ensuring the image is private
-  ami_users = []
 
   # Tags to apply to the created AMI
   tags = {
