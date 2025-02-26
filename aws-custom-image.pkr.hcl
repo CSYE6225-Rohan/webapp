@@ -13,6 +13,24 @@ variable "aws_db_name" {
   default = "your-database-name"
 }
 
+variable "aws_source_ami" {
+  type    = string
+  default = "ami-04b4f1a9cf54c11d0"
+}
+
+variable "aws_instance_type" {
+  type    = string
+  default = "t2.micro"
+}
+
+variable "aws_ami_name" {
+  type    = string
+  default = "custom-ubuntu-24.04-ami-{{timestamp}}"
+}
+variable "aws_ssh_username" {
+  type    = string
+  default = "ubuntu"
+}
 
 
 packer {
@@ -26,15 +44,10 @@ packer {
 
 source "amazon-ebs" "aws_custom_image" {
   region        = var.aws_region
-  source_ami    = "ami-04b4f1a9cf54c11d0"
-  instance_type = "t2.micro"
-  ssh_username  = "ubuntu"
-  ami_name      = "custom-ubuntu-24.04-ami-{{timestamp}}"
-  # vpc_id                      = "vpc-067e649a2e24be3b0"
-  # subnet_id                   = "subnet-067f64dce030489fb"
-  # ssh_keypair_name            = "ec2_keypair"
-  # ssh_private_key_file        = "./ec2_keypair.pem"
-  # security_group_ids          = ["sg-0b4ff83196afd93f1"]
+  source_ami    = var.aws_source_ami
+  instance_type = var.aws_instance_type
+  ssh_username  = var.ssh_username
+  ami_name      = var.aws_ami_name
   associate_public_ip_address = true
 
   # Ensuring the image is private

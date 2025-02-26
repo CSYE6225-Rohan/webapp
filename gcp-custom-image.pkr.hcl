@@ -6,12 +6,36 @@ variable "image_name" {
   default = "custom-ubuntu-24-04"
 }
 
+variable "image_family" {
+  default = "custom-ubuntu"
+}
+
+variable "image_description" {
+  default = "Custom Ubuntu 24.04 LTS Image"
+}
+
+variable "source_image_family" {
+  default = "ubuntu-2404-lts"
+}
+
+variable "source_image" {
+  default = "ubuntu-2404-noble-amd64-v20250214"
+}
+
 variable "machine_type" {
   default = "e2-micro"
 }
 
 variable "zone" {
   default = "us-central1-a"
+}
+
+variable "disk_size" {
+  default = 10
+}
+
+variable "ssh_username" {
+  default = "packer"
 }
 
 variable "db_name" {
@@ -46,15 +70,15 @@ variable "db_root_password" {
 
 source "googlecompute" "ubuntu" {
   project_id          = var.gcp_project_id
-  source_image_family = "ubuntu-2404-lts"
-  source_image        = "ubuntu-2404-noble-amd64-v20250214"
+  source_image_family = var.source_image_family
+  source_image        = var.source_image
   machine_type        = var.machine_type
   zone                = var.zone
   image_name          = var.image_name
-  image_family        = "custom-ubuntu"
-  image_description   = "Custom Ubuntu 24.04 LTS Image"
-  disk_size           = 10
-  ssh_username        = "packer"
+  image_family        = var.image_family
+  image_description   = var.image_description
+  disk_size           = var.disk_size
+  ssh_username        = var.ssh_username
 }
 
 build {
