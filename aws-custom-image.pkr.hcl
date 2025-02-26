@@ -33,7 +33,7 @@ variable "aws_ssh_username" {
 }
 
 variable "aws_shared_users"{
-  type   = list
+  type   = list(string)
   default = ["273354624515"]
 }
 
