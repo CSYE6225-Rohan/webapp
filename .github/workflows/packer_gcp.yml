@@ -50,11 +50,9 @@ jobs:
 
       # Step 2: Set up Google Cloud SDK and authenticate with service account
       - name: Set up Google Cloud credentials
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS_JSON }}
         run: |
-          echo "${GOOGLE_APPLICATION_CREDENTIALS}" > ${HOME}/gcloud-key.json
-          gcloud auth activate-service-account --key-file=${HOME}/gcloud-key.json
+          echo "${{secrets.GCP_CREDENTIALS_JSON}}" >> gcloud-key.json
+          gcloud auth activate-service-account --key-file=./gcloud-key.json
 
       - name: Enablement
         run: gcloud services enable compute.googleapis.com --project=dev-project-452005
