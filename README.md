@@ -40,3 +40,5 @@ packer build \
   <your-packer-file>.pkr.hcl     
 
 Ubuntu 2404 Custom images will be created on AWS and GCP
+
+test
