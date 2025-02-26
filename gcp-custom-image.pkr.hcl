@@ -46,8 +46,8 @@ variable "db_root_password" {
 
 source "googlecompute" "ubuntu" {
   project_id          = var.gcp_project_id
-  source_image_family = "ubuntu-2404-lts"                   # Correct source image family
-  source_image        = "ubuntu-2404-noble-amd64-v20250214" # Correct image name if needed
+  source_image_family = "ubuntu-2404-lts"
+  source_image        = "ubuntu-2404-noble-amd64-v20250214"
   machine_type        = var.machine_type
   zone                = var.zone
   image_name          = var.image_name
@@ -62,7 +62,7 @@ build {
   # Copy application artifacts to the instance
   provisioner "file" {
     source      = "./webapp.zip"
-    destination = "/home/ubuntu/webapp.zip"
+    destination = "/tmp/webapp.zip"
   }
 
 
@@ -88,7 +88,7 @@ build {
       "sudo mkdir -p /opt/csye6225/",
 
       # Unzip the application files (Ensure 'webapp.zip' is available on the build machine)
-      "sudo unzip /home/ubuntu/webapp.zip -d /opt/csye6225/webapp",
+      "sudo unzip /tmp/webapp.zip -d /opt/csye6225/webapp",
 
       # Create the user and group
       "sudo groupadd csye6225",
