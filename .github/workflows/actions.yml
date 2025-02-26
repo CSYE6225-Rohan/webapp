@@ -26,7 +26,7 @@ jobs:
 
       - name: Set up environment file
         run: |
-          echo "hostname=mysql" >> .env
+          echo "hostname=localhost" >> .env
           echo "username=root" >> .env
           echo "password=rootpassword" >> .env 
           echo "database=testdb" >> .env        
