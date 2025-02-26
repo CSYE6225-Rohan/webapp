@@ -3,7 +3,7 @@ variable "gcp_project_id" {
 }
 
 variable "image_name" {
-  default = "custom-ubuntu-24-04"
+  default = "custom-ubuntu-24-04-{{timestamp}}"
 }
 
 variable "image_family" {
