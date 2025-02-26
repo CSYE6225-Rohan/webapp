@@ -1,8 +1,53 @@
+variable "gcp_project_id" {
+  default = "dev-project-452005"
+}
+
+variable "image_name" {
+  default = "custom-ubuntu-24-04"
+}
+
+variable "machine_type" {
+  default = "e2-micro"
+}
+
+variable "zone" {
+  default = "us-central1-a"
+}
+
+variable "db_name" {
+  type    = string
+  default = "your-database-name"
+}
+
+variable "db_port" {
+  type    = number
+  default = 3306
+}
+
+variable "db_host" {
+  type    = string
+  default = "your-database-host"
+}
+
+variable "db_user" {
+  type    = string
+  default = "your-database-user"
+}
+
+variable "db_password" {
+  type    = string
+  default = "your-database-password"
+}
+
+variable "db_root_password" {
+  type    = string
+  default = "your-root-password"
+}
 
 source "googlecompute" "ubuntu" {
   project_id          = var.gcp_project_id
-  source_image_family = "ubuntu-2404-lts"
-  source_image        = "ubuntu-2404-noble-amd64-v20250214"
+  source_image_family = "ubuntu-2404-lts"                   # Correct source image family
+  source_image        = "ubuntu-2404-noble-amd64-v20250214" # Correct image name if needed
   machine_type        = var.machine_type
   zone                = var.zone
   image_name          = var.image_name
