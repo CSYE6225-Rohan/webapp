@@ -61,7 +61,7 @@ build {
   sources = ["source.googlecompute.ubuntu"]
   # Copy application artifacts to the instance
   provisioner "file" {
-    source      = "./webapp_gcp.zip"
+    source      = "./webapp.zip"
     destination = "/home/ubuntu/webapp.zip"
   }
 
