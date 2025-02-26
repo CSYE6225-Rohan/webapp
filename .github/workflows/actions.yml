@@ -1,7 +1,7 @@
 name: Node.js Tests with MySQL
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - main  
 
@@ -13,10 +13,10 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: "${{secrets.DB_ROOT_PASSWORD}}" 
-          MYSQL_DATABASE: "${{secrets.DB_NAME}}"             
-          MYSQL_USER: "${{secrets.DB_USER}}"               
-          MYSQL_PASSWORD: "${{secrets.DB_PASSWORD}}"     
+          MYSQL_ROOT_PASSWORD: "rootpassword" 
+          MYSQL_DATABASE: "testdb"             
+          MYSQL_USER: "root"               
+          MYSQL_PASSWORD: "testpassword"     
         ports:
           - 3306:3306
 
@@ -26,11 +26,11 @@ jobs:
 
       - name: Set up environment file
         run: |
-          echo "hostname=${{secrets.DB_HOST}}" >> .env
-          echo "username=${{secrets.DB_USER}}" >> .env
-          echo "password=${{secrets.DB_PASSWORD}}" >> .env 
-          echo "database=${{secrets.DB_NAME}}" >> .env        
-          echo "port=${{secrets.DB_PORT}}" >> .env
+          echo "hostname=localhost" >> .env
+          echo "username=root" >> .env
+          echo "password=testpassword" >> .env 
+          echo "database=testdb" >> .env        
+          echo "port=3306" >> .env
 
       - name: Install dependencies
         run: npm install
