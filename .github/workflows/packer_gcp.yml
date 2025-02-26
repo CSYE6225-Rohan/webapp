@@ -58,6 +58,9 @@ jobs:
       - name: Enablement
         run: gcloud services enable compute.googleapis.com --project=dev-project-452005
 
+      - name: Installing plugins
+        run: packer init gcp-custom-image.pkr.hcl
+
       # Step 3: Run GCP-related commands (e.g., Packer, Terraform, etc.)
       - name: Run GCP Packer build
         run: |

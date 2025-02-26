@@ -3,6 +3,17 @@ variable "aws_region" {
   default = "us-east-1"
 }
 
+variable "aws_db_root_password" {
+  type    = string
+  default = "your-root-password"
+}
+
+variable "aws_db_name" {
+  type    = string
+  default = "your-database-name"
+}
+
+
 
 packer {
   required_plugins {
@@ -60,10 +71,10 @@ build {
       "sudo apt-get install npm -y",
 
       #change authentication method from auth_socket to native password
-      "sudo mysql -u root -p'${var.db_root_password}' -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.db_root_password}';\"",
+      "sudo mysql -u root -p'${var.aws_db_root_password}' -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.aws_db_root_password}';\"",
       #Create the database in the RDBMS.
 
-      "mysql -u root -p'${var.db_root_password}' -e \"CREATE DATABASE ${var.db_name};\"",
+      "mysql -u root -p'${var.aws_db_root_password}' -e \"CREATE DATABASE ${var.aws_db_name};\"",
 
       # Making csye6225 repo
       "sudo mkdir /opt/csye6225/",
