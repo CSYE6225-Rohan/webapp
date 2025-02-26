@@ -1,4 +1,9 @@
 # Define required plugins
+variable "aws_region" {
+  default = "us-east-1"
+}
+
+
 packer {
   required_plugins {
     amazon-ebs = {
