@@ -39,6 +39,4 @@ packer build \
   -var "db_port=<DB_PORT>" \
   <your-packer-file>.pkr.hcl     
 
-packer.yml runs when pull request is merged and conducts integration tests
-
-test
+Ubuntu 2404 Custom images will be created on AWS and GCP
