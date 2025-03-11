@@ -27,7 +27,7 @@ variable "machine_type" {
 }
 
 variable "zone" {
-  default = "us-central1-a"
+  default = "us-central1-b"
 }
 
 variable "disk_size" {
