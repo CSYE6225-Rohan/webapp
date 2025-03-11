@@ -52,7 +52,7 @@ jobs:
         run: packer init .
 
       - name: Format packer
-        run: packer fmt .
+        run: packer fmt -check=true
       
       - name: Validate packer
         run: packer validate .
