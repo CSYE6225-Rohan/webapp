@@ -15,13 +15,13 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: "rootpassword" 
           MYSQL_DATABASE: "testdb"             
-          MYSQL_USER: "testuser"               
+          MYSQL_USER: "testuser"               lkhb,khjb,
           MYSQL_PASSWORD: "rootpassword"     
         ports:
           - 3306:3306
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository ygkhhkygio
         uses: actions/checkout@v4
 
       - name: Set up environment file
