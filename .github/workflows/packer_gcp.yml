@@ -1,0 +1,73 @@
+name: Deploy Web App and Run Tests
+
+on:
+  pull_request_target:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  deploy_and_test_gcp:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: "${{secrets.DB_ROOT_PASSWORD}}" 
+          MYSQL_DATABASE: "${{secrets.DB_NAME}}"             
+          MYSQL_USER: "${{secrets.DB_USER}}"               
+          MYSQL_PASSWORD: "${{secrets.DB_PASSWORD}}"     
+        ports:
+          - 3306:3306
+          
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up environment file
+        run: |
+            echo "hostname=${{secrets.DB_HOST}}" >> .env
+            echo "username=root" >> .env
+            echo "password=${{secrets.DB_ROOT_PASSWORD}}" >> .env 
+            echo "database=${{secrets.DB_NAME}}" >> .env        
+            echo "port=${{secrets.DB_PORT}}" >> .env
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Wait for MySQL to be ready
+        run: sleep 20
+
+      - name: Run tests
+        run: npm test
+        continue-on-error: false 
+
+      - name: Make zip
+        run: zip -r webapp.zip . -x ".git/*"
+
+
+      # Step 2: Set up Google Cloud SDK and authenticate with service account
+      - name: Set up Google Cloud credentials
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS_JSON }}
+        run: |
+          echo "${GOOGLE_APPLICATION_CREDENTIALS}" > ${HOME}/gcloud-key.json
+          gcloud auth activate-service-account --key-file=${HOME}/gcloud-key.json
+
+      - name: Enablement
+        run: gcloud services enable compute.googleapis.com --project=dev-project-452005
+
+      - name: Installing plugins
+        run: packer plugins install github.com/hashicorp/googlecompute
+
+      # Step 3: Run GCP-related commands (e.g., Packer, Terraform, etc.)
+      - name: Run GCP Packer build
+        run: |
+          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud-key.json
+          packer build \
+            -var "gcp_project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -var "db_root_password=${{ secrets.DB_ROOT_PASSWORD }}" \
+            -var "db_name=${{ secrets.DB_NAME }}" \
+            gcp-custom-image.pkr.hcl

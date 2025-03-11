@@ -1,4 +1,42 @@
 # Define required plugins
+variable "aws_region" {
+  default = "us-east-1"
+}
+
+variable "aws_db_root_password" {
+  type    = string
+  default = "your-root-password"
+}
+
+variable "aws_db_name" {
+  type    = string
+  default = "your-database-name"
+}
+
+variable "aws_source_ami" {
+  type    = string
+  default = "ami-04b4f1a9cf54c11d0"
+}
+
+variable "aws_instance_type" {
+  type    = string
+  default = "t2.micro"
+}
+
+variable "aws_ami_name" {
+  type    = string
+  default = "custom-ubuntu-24.04-ami-{{timestamp}}"
+}
+variable "aws_ssh_username" {
+  type    = string
+  default = "ubuntu"
+}
+
+variable "aws_shared_users"{
+  type   = list(string)
+  default = ["273354624515"]
+}
+
 packer {
   required_plugins {
     amazon-ebs = {
@@ -8,57 +46,14 @@ packer {
   }
 }
 
-# Define AWS credentials and database details as variables
-# variable "aws_access_key" { default = "" }
-# variable "aws_secret_key" {default = ""}
-variable "aws_region" {
-  default = "us-east-1"
-}
-
-variable "db_host" {
-  default = "localhost"
-}
-
-variable "db_root_password" {
-  description = "The root password for MySQL"
-  type        = string
-  default     = "default" #don mention your password here
-}
-
-variable "db_user" {
-  default = "rohan"
-}
-
-variable "db_password" {
-  description = "The root password for MySQL"
-  type        = string
-  default     = "default" #dont mention your password here
-}
-
-variable "db_name" {
-  default = "mydatabase"
-}
-
-variable "db_port" {
-  default = "3306"
-}
 source "amazon-ebs" "aws_custom_image" {
-  # access_key                  = var.aws_access_key
-  # secret_key                  = var.aws_secret_key
-  region                      = var.aws_region
-  source_ami                  = "ami-04b4f1a9cf54c11d0"
-  instance_type               = "t2.micro"
-  ssh_username                = "ubuntu"
-  ami_name                    = "custom-ubuntu-24.04-ami-{{timestamp}}"
-  vpc_id                      = "vpc-067e649a2e24be3b0"
-  subnet_id                   = "subnet-067f64dce030489fb"
-  ssh_keypair_name            = "ec2_keypair"
-  ssh_private_key_file        = "./ec2_keypair.pem"
-  security_group_ids          = ["sg-0b4ff83196afd93f1"]
+  region        = var.aws_region
+  source_ami    = var.aws_source_ami
+  instance_type = var.aws_instance_type
+  ssh_username  = var.aws_ssh_username
+  ami_name      = var.aws_ami_name
+  ami_users     = var.aws_shared_users
   associate_public_ip_address = true
-
-  # Ensuring the image is private
-  ami_users = []
 
   # Tags to apply to the created AMI
   tags = {
@@ -72,16 +67,16 @@ build {
 
   # Copy application artifacts to the instance
   provisioner "file" {
-    source      = "./webapp.zip"            # Your local webapp.zip
-    destination = "/home/ubuntu/webapp.zip" # Ensure correct destination
+    source      = "./webapp.zip"
+    destination = "/home/ubuntu/webapp.zip"
   }
 
   # Provision MySQL, Node.js, and setup
   provisioner "shell" {
-    environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
 
     inline = [
       # Update the package list
+      "DEBIAN_FRONTEND=noninteractive",
       "sudo apt-get update",
 
       # Install required packages
@@ -91,10 +86,10 @@ build {
       "sudo apt-get install npm -y",
 
       #change authentication method from auth_socket to native password
-      "sudo mysql -u root -p'${var.db_root_password}' -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.db_root_password}';\"",
+      "sudo mysql -u root -p'${var.aws_db_root_password}' -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.aws_db_root_password}';\"",
       #Create the database in the RDBMS.
 
-      "mysql -u root -p'${var.db_root_password}' -e \"CREATE DATABASE ${var.db_name};\"",
+      "mysql -u root -p'${var.aws_db_root_password}' -e \"CREATE DATABASE ${var.aws_db_name};\"",
 
       # Making csye6225 repo
       "sudo mkdir /opt/csye6225/",

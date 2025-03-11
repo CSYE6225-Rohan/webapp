@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  deploy_and_test:
+  deploy_and_test_aws:
     runs-on: ubuntu-latest
 
     services:
@@ -32,8 +32,8 @@ jobs:
       - name: Set up environment file
         run: |
           echo "hostname=${{secrets.DB_HOST}}" >> .env
-          echo "username=${{secrets.DB_USER}}" >> .env
-          echo "password=${{secrets.DB_PASSWORD}}" >> .env 
+          echo "username=root" >> .env
+          echo "password=${{secrets.DB_ROOT_PASSWORD}}" >> .env 
           echo "database=${{secrets.DB_NAME}}" >> .env        
           echo "port=${{secrets.DB_PORT}}" >> .env
 
@@ -45,9 +45,10 @@ jobs:
 
       - name: Run tests
         run: npm test
+        continue-on-error: false 
 
       - name: Make zip
-        run: zip -r webapp.zip .
+        run: zip -r webapp.zip . -x ".git/*"
 
       - name: show secrets
         run: |
@@ -60,6 +61,9 @@ jobs:
           aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
           aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
           aws configure set region us-east-1
+        
+      - name: Install gcloud for packer
+        run: "packer plugins install github.com/hashicorp/googlecompute"
 
       # Step 3: Initialize packer
       - name: Initialize packer to create EC2 instance
@@ -76,9 +80,7 @@ jobs:
         run: |
           packer build \
           -var "aws_region=${{secrets.AWS_REGION}}" \
-          -var "db_host=${{secrets.DB_HOST}}" \
-          -var "db_user=${{secrets.DB_USER}}" \
-          -var "db_password=${{secrets.DB_PASSWORD}}" \
-          -var "db_root_password=${{secrets.DB_ROOT_PASSWORD}}"
-          -var "db_port=${{secrets.DB_PORT}}" \
+          -var "aws_db_root_password=${{secrets.DB_ROOT_PASSWORD}}" \
+          -var "aws_db_name=${{secrets.DB_NAME}}" \
           aws-custom-image.pkr.hcl
+
