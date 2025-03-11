@@ -61,7 +61,7 @@ variable "db_user" {
 variable "db_password" {
   type    = string
   default = "your-database-password"
-           }
+}
 
 variable "db_root_password" {
   type    = string
