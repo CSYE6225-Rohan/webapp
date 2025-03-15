@@ -81,15 +81,15 @@ build {
 
       # Install required packages
       "sudo apt-get install -y nodejs",
-      "sudo apt-get install mysql-server -y",
+      # "sudo apt-get install mysql-server -y",
       "sudo apt-get install unzip -y",
       "sudo apt-get install npm -y",
 
       #change authentication method from auth_socket to native password
-      "sudo mysql -u root -p'${var.aws_db_root_password}' -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.aws_db_root_password}';\"",
+      # "sudo mysql -u root -p'${var.aws_db_root_password}' -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.aws_db_root_password}';\"",
       #Create the database in the RDBMS.
 
-      "mysql -u root -p'${var.aws_db_root_password}' -e \"CREATE DATABASE ${var.aws_db_name};\"",
+      # "mysql -u root -p'${var.aws_db_root_password}' -e \"CREATE DATABASE ${var.aws_db_name};\"",
 
       # Making csye6225 repo
       "sudo mkdir /opt/csye6225/",
