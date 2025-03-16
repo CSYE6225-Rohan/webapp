@@ -1,27 +1,40 @@
 const express = require('express');
 const app = express();
-const endpoints = require('./routes/endpoints')
+const endpoints = require('./routes/endpoints');
 
 // Set up the routes
-const { sequelize, authenticate } = require('./config/db')
+const { sequelize, authenticate } = require('./config/db');
 
 sequelize.sync();
 
-// Middleware to reject requests with any payload or non get methods
-// app.use((req, res, next) => {
-   
-//     if (req.method!='GET')
-//         return res.status(405).send()
-//     if ((req.headers['content-length'] && parseInt(req.headers['content-length']) > 0) || Object.keys(req.query).length > 0) 
-//         return res.status(400).send();
-    
-//     next();
 
-// });
+const allowedRoutes = {
+    "/healthz": ["GET"],
+    "/v1/file": ["POST"],
+    "/v1/file/:id": ["GET", "DELETE"]
+};
+
+app.use((req, res, next) => {
+    if (req.path === "/healthz" && (req.headers['content-length'] && parseInt(req.headers['content-length']) > 0|| Object.keys(req.query).length > 0)) {
+        return res.status(400).send();
+    }
+    next();
+});
 
 app.use('/', endpoints);
 
-app.use("*", (_, res) => {
+app.use((req, res) => {
+    // Check if the request matches any defined endpoint
+    const routeExists = Object.keys(allowedRoutes).some(route => {
+        const regex = new RegExp(`^${route.replace(/:id/g, "[^/]+")}$`);
+        return regex.test(req.path);
+    });
+
+    if (routeExists) {
+        return res.status(405);
+    }
+
+    // If no matching route found, return 404 with custom headers
     res.status(404).set({
         'Cache-Control': 'no-cache',
         'Content-Length': '0',
@@ -35,5 +48,4 @@ app.use("*", (_, res) => {
     }).send();
 });
 
-
-module.exports = app; 
+module.exports = app;
