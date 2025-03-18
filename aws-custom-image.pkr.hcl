@@ -16,7 +16,7 @@ variable "aws_db_name" {
 variable "aws_source_ami" {
   type    = string
   default = "ami-04b4f1a9cf54c11d0"
-}
+  }
 
 variable "aws_instance_type" {
   type    = string
