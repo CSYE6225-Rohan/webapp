@@ -21,7 +21,7 @@ const getBucketName = async () => {
             console.log("Bucket Name: ", bucketName);
             return bucketName;
         } else {
-            console.error("More than one bucket found. Please check.");
+            console.error("More than one bucket or none found. Please check.");
         }
     } catch (error) {
         console.error("Error retrieving bucket name: ", error);
@@ -79,7 +79,7 @@ exports.uploadFile = async (req, res) => {
         const url = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileKey}`;
 
         const file = await File.create({
-            id: uuidv4(),
+            // id: uuidv4(),
             file_name: req.file.originalname,
             s3_key: fileKey,
             bucket_name: bucketName,
@@ -110,8 +110,11 @@ exports.getFile = async (req, res) => {
             Key: file.s3_key
         }).promise();
 
-        res.setHeader('Content-Type', file.content_type);
-        res.send(s3Response.Body);
+        // res.setHeader('Content-Type', file.content_type);
+        res.status(200).json({file_name: file.file_name,
+            id: file.id,
+            url: file.url,
+            upload_date: file.upload_date});
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Error retrieving file" });
