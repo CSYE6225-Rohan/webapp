@@ -20,10 +20,10 @@ variable "aws_source_ami" {
 
 variable "aws_instance_type" {
   type    = string
-  default = "t2.micro"
-}
-
-variable "aws_ami_name" {
+  default = "t2.micro"dfahdha
+quhlu}
+whlaiuh
+variable "aws_ami_name" {llqhwtr
   type    = string
   default = "custom-ubuntu-24.04-ami-{{timestamp}}"
 }
