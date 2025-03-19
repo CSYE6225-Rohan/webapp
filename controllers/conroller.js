@@ -55,7 +55,7 @@ exports.getHealthStatus = async (req, res) => {
 
 exports.uploadFile = async (req, res) => {
     if (!req.file) {
-        return res.status(400).json({ error: "No file uploaded" });
+        return res.status(400).send();
     }
 
     const fileKey = `uploads/${uuidv4()}-${req.file.originalname}`;
@@ -66,7 +66,7 @@ exports.uploadFile = async (req, res) => {
 
         // Make sure the bucket name is a valid string
         if (!bucketName) {
-            return res.status(500).json({ error: "Bucket name is missing" });
+            return res.status(400).send();
         }
 
         const s3Response = await s3.upload({
@@ -94,7 +94,7 @@ exports.uploadFile = async (req, res) => {
             upload_date: uploadDate });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "File upload failed" });
+        res.status(400).send();
     }
 };
 
@@ -102,7 +102,7 @@ exports.getFile = async (req, res) => {
     try {
         const file = await File.findByPk(req.params.id);
         if (!file) {
-            return res.status(404).json({ error: "File not found" });
+            return res.status(404).send();
         }
 
         const s3Response = await s3.getObject({
@@ -117,7 +117,7 @@ exports.getFile = async (req, res) => {
             upload_date: file.upload_date});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Error retrieving file" });
+        res.status(404).send();
     }
 };
 
@@ -125,7 +125,7 @@ exports.deleteFile = async (req, res) => {
     try {
         const file = await File.findByPk(req.params.id);
         if (!file) {
-            return res.status(404).json({ error: "File not found" });
+            return res.status(404).send();
         }
 
         await s3.deleteObject({
@@ -137,6 +137,6 @@ exports.deleteFile = async (req, res) => {
         res.status(204).send();
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Error deleting file" });
+        res.status(404).send();
     }
 };

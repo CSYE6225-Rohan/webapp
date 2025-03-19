@@ -25,10 +25,10 @@ router.all('*', (req, res) => {
     });
 
     if (route && !allowedRoutes[route].includes(req.method)) {
-        return res.status(405).json({ error: "Method Not Allowed" });
+        return res.status(405).send();
     }
 
-    res.status(404).json({ error: "Not Found" });
+    res.status(404).send();
 });
 
 module.exports = router;
