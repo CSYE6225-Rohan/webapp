@@ -7,7 +7,6 @@ const { sequelize, authenticate } = require('./config/db');
 
 sequelize.sync();
 
-
 const allowedRoutes = {
     "/healthz": ["GET"],
     "/v1/file": ["POST"],
@@ -35,17 +34,7 @@ app.use((req, res) => {
     }
 
     // If no matching route found, return 404 with custom headers
-    res.status(404).set({
-        'Cache-Control': 'no-cache',
-        'Content-Length': '0',
-        'Content-Type': 'application/octet-stream',
-        'ETag': 'W/"0-2jmj7l5rSw0yVb/vlWAYkK/YBwk"',
-        'Expires': '-1',
-        'X-Powered-By': 'Express',
-        'Server': 'nginx',
-        'RateLimit': '10000-in-1min; r=9999; t=60',
-        'RateLimit-Policy': '10000-in-1min; q=10000; w=60; pk=:NGFmOTQ2ZWNkYjdl:'
-    }).send();
+    res.status(404).send();
 });
 
 module.exports = app;

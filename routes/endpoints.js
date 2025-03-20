@@ -7,7 +7,17 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // Allowed routes
 router.get('/healthz', getHealthStatus);
-router.post('/v1/file', upload.single('file'), uploadFile);
+router.post('/v1/file', upload.single('file'), (req, res, next) => {
+    uploadFile(req, res).catch(next); // Pass errors to next middleware
+});
+
+// Centralized error-handling middleware
+router.use((err, req, res, next) => {
+    if (err instanceof multer.MulterError) {
+        return res.status(400).send();
+    }
+    next(err); // Pass other errors to the default error handler
+});
 router.get('/v1/file/:id', getFile);
 router.delete('/v1/file/:id', deleteFile);
 

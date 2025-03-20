@@ -3,7 +3,7 @@ const AWS = require('aws-sdk');
 const { v4: uuidv4 } = require('uuid');
 const {File} = require('../model/model'); // Import model for file db
 const { sequelize } = require('../config/db');
-const multer = require('multer');
+// const multer = require('multer');
 
 const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -11,7 +11,7 @@ const s3 = new AWS.S3({
     region: process.env.AWS_REGION
 });
 
-const upload = multer({ storage: multer.memoryStorage() });
+// const upload = multer({ storage: multer.memoryStorage() });
 
 const getBucketName = async () => {
     try {
@@ -100,6 +100,8 @@ exports.uploadFile = async (req, res) => {
 
 exports.getFile = async (req, res) => {
     try {
+        if (req.headers['content-length'] && parseInt(req.headers['content-length']) > 0|| Object.keys(req.query).length > 0)
+            return res.status(400).send()
         const file = await File.findByPk(req.params.id);
         if (!file) {
             return res.status(404).send();
