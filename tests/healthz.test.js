@@ -1,7 +1,7 @@
 const request = require("supertest");
 const { sequelize, testDbConnection } = require("../config/db");
 const app = require("../app");
-const HealthzCheck = require("../model/model");
+const { HealthCheck } = require("../model/model");
 
 // database
 beforeAll(async () => {
@@ -24,30 +24,30 @@ describe("Health Check Controller", () => {
 
     const response = await request(app).get("/healthz");
     expect(response.status).toBe(200);
-    const records = await HealthzCheck.findAll();
+    const records = await HealthCheck.findAll();
     expect(records.length).toBeGreaterThan(0); 
     expect(records[0].datetime).toBeDefined(); 
   });
 
   it("It should respond with a 503 Service Unavailable status if the database connection is unavailable.", async () => {
-    jest.spyOn(HealthzCheck, "create").mockImplementation(() => {
+    jest.spyOn(HealthCheck, "create").mockImplementation(() => {
       throw new Error("Database Connection Failed");
     });
     const response = await request(app).get("/healthz");
     expect(response.status).toBe(503);
-    HealthzCheck.create.mockRestore();
+    HealthCheck.create.mockRestore();
   });
 
 
   it("It should respond with a 503 Service Unavailable status if an error occurs while inserting the health check record.", async () => {
     jest
-      .spyOn(HealthzCheck, "create")
+      .spyOn(HealthCheck, "create")
       .mockRejectedValue(new Error("Insertion error"));
 
     const response = await request(app).get("/healthz");
 
     expect(response.status).toBe(503);
-    expect(HealthzCheck.create).toHaveBeenCalled();
+    expect(HealthCheck.create).toHaveBeenCalled();
   });
 
   it("It should respond with a 405 Method Not Allowed status for unsupported HTTP methods.", async () => {

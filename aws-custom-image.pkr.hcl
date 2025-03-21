@@ -81,15 +81,15 @@ build {
 
       # Install required packages
       "sudo apt-get install -y nodejs",
-      "sudo apt-get install mysql-server -y",
+      # "sudo apt-get install mysql-server -y",
       "sudo apt-get install unzip -y",
       "sudo apt-get install npm -y",
 
       #change authentication method from auth_socket to native password
-      "sudo mysql -u root -p'${var.aws_db_root_password}' -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.aws_db_root_password}';\"",
+      # "sudo mysql -u root -p'${var.aws_db_root_password}' -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${var.aws_db_root_password}';\"",
       #Create the database in the RDBMS.
 
-      "mysql -u root -p'${var.aws_db_root_password}' -e \"CREATE DATABASE ${var.aws_db_name};\"",
+      # "mysql -u root -p'${var.aws_db_root_password}' -e \"CREATE DATABASE ${var.aws_db_name};\"",
 
       # Making csye6225 repo
       "sudo mkdir /opt/csye6225/",
@@ -111,7 +111,7 @@ build {
       "sudo npm install",
 
       # Create a systemd service file
-      "echo '[Unit]\\nDescription=CSYE 6225 App\\nConditionPathExists=/opt/application.properties\\nAfter=network.target\\n\\n[Service]\\nType=simple\\nUser=csye6225\\nGroup=csye6225\\nWorkingDirectory=/opt/csye6225/webapp\\nExecStart=/usr/bin/node /opt/csye6225/webapp/app.js\\nRestart=always\\nRestartSec=3\\nStandardOutput=syslog\\nStandardError=syslog\\nSyslogIdentifier=csye6225\\n\\n[Install]\\nWantedBy=multi-user.target' | sudo tee /etc/systemd/system/csye6225.service > /dev/null",
+      "echo '[Unit]\\nDescription=CSYE 6225 App\\nAfter=network.target\\n\\n[Service]\\nType=simple\\nUser=csye6225\\nGroup=csye6225\\nWorkingDirectory=/opt/csye6225/webapp\\nExecStart=/usr/bin/node /opt/csye6225/webapp/server.js\\nRestart=always\\nRestartSec=3\\nStandardOutput=syslog\\nStandardError=syslog\\nSyslogIdentifier=csye6225\\n\\n[Install]\\nWantedBy=multi-user.target' | sudo tee /etc/systemd/system/csye6225.service > /dev/null",
 
       # Reload systemd to recognize the new service
       "sudo systemctl daemon-reload",
