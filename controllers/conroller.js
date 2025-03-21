@@ -3,7 +3,7 @@ const AWS = require('aws-sdk');
 const { v4: uuidv4 } = require('uuid');
 const { File } = require('../model/model');
 const { sequelize } = require('../config/db');
-const logger = require('../logger'); // Import the logger
+const logger = require('./logger'); // Import the logger
 
 const cloudwatch = new AWS.CloudWatch({
     region: process.env.AWS_REGION
