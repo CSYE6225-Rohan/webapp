@@ -63,7 +63,6 @@ const getBucketName = async () => {
     }
 };
 
-// ✅ API: Health Status
 exports.getHealthStatus = async (req, res) => {
     logger.info(`GET /health - Checking API health status`);
 
@@ -88,7 +87,6 @@ exports.getHealthStatus = async (req, res) => {
     }
 };
 
-// ✅ API: Upload File
 exports.uploadFile = async (req, res) => {
     logger.info(`POST /upload - Uploading file`);
 
