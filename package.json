@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "dotenv -e .env -- jest",
+    "test": "dotenv -e .env -- jest --forceExit",
     "start": "nodemon server.js"
   },
   "author": "Rohan",
