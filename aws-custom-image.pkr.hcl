@@ -99,7 +99,7 @@ build {
       "      },",
       "      \"disk\": {",
       "        \"measurement\": [\"used_percent\"],",
-      "        \"metrics_collection_interval\": 60",
+      "        \"metrics_collection_interval\": 60,",
       "        \"resources\": [\"*\"]",
       "      },",
       "      \"mem\": {",
