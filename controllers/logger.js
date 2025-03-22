@@ -16,7 +16,7 @@ const logger = winston.createLogger({
     ),
     transports: [
         new winston.transports.Console(),
-        new winston.transports.CloudWatch(cloudwatchConfig)
+        // new winston.transports.Cloud Watch(cloudwatchConfig)
     ]
 });
 
