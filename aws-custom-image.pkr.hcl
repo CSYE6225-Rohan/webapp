@@ -114,8 +114,13 @@ build {
       "        \"collect_list\": [",
       "          {",
       "            \"file_path\": \"/var/log/syslog\",",
-      "            \"log_group_name\": \"my-syslog-group\",",
+      "            \"log_group_name\": \"syslog-group\",",
       "            \"log_stream_name\": \"{instance_id}-syslog\"",
+      "          },",
+      "            {",
+      "            \"file_path\": \"/var/log/app.log\",",
+      "            \"log_group_name\": \"app-group\",",
+      "            \"log_stream_name\": \"{instance_id}-applog\"",
       "          }",
       "        ]",
       "      }",
@@ -138,7 +143,7 @@ build {
       "sudo npm install",
 
       # Create a systemd service file for the web app
-      "echo '[Unit]\\nDescription=CSYE 6225 App\\nAfter=network.target\\n\\n[Service]\\nType=simple\\nUser=csye6225\\nGroup=csye6225\\nWorkingDirectory=/opt/csye6225/webapp\\nExecStart=/usr/bin/node /opt/csye6225/webapp/server.js\\nRestart=always\\nRestartSec=3\\nStandardOutput=syslog\\nStandardError=syslog\\nSyslogIdentifier=csye6225\\n\\n[Install]\\nWantedBy=multi-user.target' | sudo tee /etc/systemd/system/csye6225.service > /dev/null",
+      "echo '[Unit]\\nDescription=CSYE 6225 App\\nAfter=network.target\\n\\n[Service]\\nType=simple\\nUser=csye6225\\nGroup=csye6225\\nWorkingDirectory=/opt/csye6225/webapp\\nExecStart=/usr/bin/node /opt/csye6225/webapp/server.js\\nRestart=always\\nRestartSec=3\\nStandardOutput=append:/var/log/app.log\\nStandardError=append:/var/log/app.log\\nSyslogIdentifier=csye6225\\n\\n[Install]\\nWantedBy=multi-user.target' | sudo tee /etc/systemd/system/csye6225.service > /dev/null",
 
       # Reload systemd to recognize the new service
       "sudo systemctl daemon-reload",
