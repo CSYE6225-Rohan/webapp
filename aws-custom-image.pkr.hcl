@@ -80,11 +80,6 @@ build {
       # Install required packages
       "sudo apt-get install -y nodejs unzip npm",
 
-
-      # Start CloudWatch Agent on boot
-      "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json -s",
-      "sudo systemctl enable amazon-cloudwatch-agent",
-
       # Application setup
       "sudo mkdir /opt/csye6225/",
       "sudo unzip /home/ubuntu/webapp.zip -d /opt/csye6225/webapp",
