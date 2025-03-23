@@ -3,7 +3,7 @@ const AWS = require('aws-sdk');
 const { v4: uuidv4 } = require('uuid');
 const { File } = require('../model/model');
 const { sequelize } = require('../config/db');
-const logger = require('./logger');  // Import logger
+const logger = require('./logger');
 
 const cloudwatch = new AWS.CloudWatch({ region: process.env.AWS_REGION });
 const s3 = new AWS.S3({
@@ -11,6 +11,14 @@ const s3 = new AWS.S3({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     region: process.env.AWS_REGION
 });
+
+// In-memory counters for API call tracking
+const apiCounters = {
+    UploadFile: 0,
+    GetFile: 0,
+    DeleteFile: 0,
+    GetHealthStatus: 0
+};
 
 // Utility function to send custom CloudWatch metrics
 const sendCloudWatchMetric = async (name, value, unit = 'Count') => {
@@ -63,8 +71,11 @@ const getBucketName = async () => {
     }
 };
 
+// API: Health Check
 exports.getHealthStatus = async (req, res) => {
     logger.info(`GET /health - Checking API health status`);
+
+    apiCounters.GetHealthStatus++;  // Increment counter
 
     const start = Date.now();
     res.setHeader('Cache-Control', 'no-cache');
@@ -83,12 +94,15 @@ exports.getHealthStatus = async (req, res) => {
     } finally {
         const duration = Date.now() - start;
         await sendCloudWatchMetric('GetHealthStatusAPITime', duration, 'Milliseconds');
-        await sendCloudWatchMetric('GetHealthStatusAPICount', 1);
+        await sendCloudWatchMetric('GetHealthStatusAPICount', apiCounters.GetHealthStatus);
     }
 };
 
+// API: Upload File
 exports.uploadFile = async (req, res) => {
     logger.info(`POST /upload - Uploading file`);
+
+    apiCounters.UploadFile++;  // Increment counter
 
     if (!req.file) {
         logger.warn(`No file uploaded`);
@@ -146,13 +160,15 @@ exports.uploadFile = async (req, res) => {
     } finally {
         const duration = Date.now() - start;
         await sendCloudWatchMetric('UploadFileAPITime', duration, 'Milliseconds');
-        await sendCloudWatchMetric('UploadFileAPICount', 1);
+        await sendCloudWatchMetric('UploadFileAPICount', apiCounters.UploadFile);
     }
 };
 
-// ✅ API: Get File
+// API: Get File
 exports.getFile = async (req, res) => {
     logger.info(`GET /file/${req.params.id} - Fetching file`);
+
+    apiCounters.GetFile++;  // Increment counter
 
     const start = Date.now();
 
@@ -189,13 +205,15 @@ exports.getFile = async (req, res) => {
     } finally {
         const duration = Date.now() - start;
         await sendCloudWatchMetric('GetFileAPITime', duration, 'Milliseconds');
-        await sendCloudWatchMetric('GetFileAPICount', 1);
+        await sendCloudWatchMetric('GetFileAPICount', apiCounters.GetFile);
     }
 };
 
-// ✅ API: Delete File
+// API: Delete File
 exports.deleteFile = async (req, res) => {
     logger.info(`DELETE /file/${req.params.id} - Deleting file`);
+
+    apiCounters.DeleteFile++;  // Increment counter
 
     const start = Date.now();
 
@@ -229,6 +247,6 @@ exports.deleteFile = async (req, res) => {
     } finally {
         const duration = Date.now() - start;
         await sendCloudWatchMetric('DeleteFileAPITime', duration, 'Milliseconds');
-        await sendCloudWatchMetric('DeleteFileAPICount', 1);
+        await sendCloudWatchMetric('DeleteFileAPICount', apiCounters.DeleteFile);
     }
 };
