@@ -1,10 +1,9 @@
 name: Deploy Web App on EC2 (AWS) and Run Integration Tests
 
 on:
-  pull_request_target:
-    types: [closed]
+  push:
     branches:
-      - main
+      - demo
 
 jobs:
   deploy_and_test_aws:
