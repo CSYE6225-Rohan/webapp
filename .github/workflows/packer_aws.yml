@@ -79,3 +79,35 @@ jobs:
           -var "aws_db_name=${{secrets.DB_NAME}}" \
           aws-custom-image.pkr.hcl
 
+      # Step 6: Trigger ASG Instance Refresh and wait for completion
+      - name: Refresh Auto Scaling Group Instances
+        run: |
+          ASG_NAME="${{ secrets.ASG_NAME }}"
+
+          echo "Starting instance refresh for ASG: $ASG_NAME"
+          REFRESH_ID=$(aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name "$ASG_NAME" \
+            --query "InstanceRefreshId" \
+            --output text)
+
+          echo "Instance Refresh ID: $REFRESH_ID"
+
+          while true; do
+            STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name "$ASG_NAME" \
+              --instance-refresh-ids "$REFRESH_ID" \
+              --query "InstanceRefreshes[0].Status" \
+              --output text)
+
+            echo "Current status: $STATUS"
+
+            if [[ "$STATUS" == "Successful" ]]; then
+              echo "Instance refresh completed successfully."
+              exit 0
+            elif [[ "$STATUS" == "Failed" || "$STATUS" == "Cancelled" ]]; then
+              echo "Instance refresh failed or was cancelled."
+              exit 1
+            fi
+
+            sleep 30
+          done
