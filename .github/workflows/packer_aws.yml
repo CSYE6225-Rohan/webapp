@@ -57,8 +57,8 @@ jobs:
           aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
           aws configure set region us-east-1
         
-      # - name: Install gcloud for packer
-      #   run: "packer plugins install github.com/hashicorp/googlecompute"
+      - name: Install gcloud for packer
+        run: "packer plugins install github.com/hashicorp/googlecompute"
 
       # Step 3: Initialize packer
       - name: Initialize packer to create EC2 instance
