@@ -1,8 +1,8 @@
 name: Deploy Web App on EC2 (AWS) and Run Integration Tests
 
 on:
-  pull_request:
-    #types: [closed]
+  pull_request_target:
+    types: [closed]
     branches:
       - main
 
@@ -104,8 +104,8 @@ jobs:
         run: |
             NEW_VERSION=$(aws ec2 create-launch-template-version \
               --launch-template-name "${{secrets.LAUNCH_TEMPLATE}}" \
-              --source-version '$Latest' \ 
-              --launch-template-data '{\"ImageId\":\"${{env.LATEST_AMI}}\"}'' \
+              --source-version \$Latest \
+              --launch-template-data "{\"ImageId\":\"${{env.LATEST_AMI}}\"}" \
               --query 'VersionNumber' --output text)
             echo "Created new version: $NEW_VERSION"
             echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
