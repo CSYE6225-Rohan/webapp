@@ -48,12 +48,12 @@ packer {
 }
 
 source "amazon-ebs" "aws_custom_image" {
-  region        = var.aws_region
-  source_ami    = var.aws_source_ami
-  instance_type = var.aws_instance_type
-  ssh_username  = var.aws_ssh_username
-  ami_name      = var.aws_ami_name
-  ami_users     = var.aws_shared_users
+  region                      = var.aws_region
+  source_ami                  = var.aws_source_ami
+  instance_type               = var.aws_instance_type
+  ssh_username                = var.aws_ssh_username
+  ami_name                    = var.aws_ami_name
+  ami_users                   = var.aws_shared_users
   associate_public_ip_address = true
 
   tags = {
@@ -75,7 +75,16 @@ build {
     inline = [
       # Update the package list
       "DEBIAN_FRONTEND=noninteractive",
-      "sudo apt-get update",
+      "sudo apt-get update -y",
+      "sudo apt-get install -y unzip jq",
+
+      "if ! command -v aws &> /dev/null; then",
+      "  curl \"https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip\" -o \"awscliv2.zip\"",
+      "  unzip awscliv2.zip",
+      "  sudo ./aws/install",
+      "  rm -rf awscliv2.zip aws",
+      "fi",
+      "aws --version",
 
       # Install required packages
       "sudo apt-get install -y nodejs unzip npm",
@@ -88,7 +97,6 @@ build {
       "sudo chown -R csye6225:csye6225 /opt/csye6225/",
       "cd /opt/csye6225/webapp",
       "sudo npm install",
-
       # Create a systemd service file for the web app
       "echo '[Unit]\\nDescription=CSYE 6225 App\\nAfter=network.target\\n\\n[Service]\\nType=simple\\nUser=csye6225\\nGroup=csye6225\\nWorkingDirectory=/opt/csye6225/webapp\\nExecStart=/usr/bin/node /opt/csye6225/webapp/server.js\\nRestart=always\\nRestartSec=3\\nStandardOutput=append:/var/log/app.log\\nStandardError=append:/var/log/app.log\\nSyslogIdentifier=csye6225\\n\\n[Install]\\nWantedBy=multi-user.target' | sudo tee /etc/systemd/system/csye6225.service > /dev/null",
 

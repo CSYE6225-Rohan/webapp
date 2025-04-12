@@ -7,6 +7,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // Allowed routes
 router.get('/healthz', getHealthStatus);
+// router.get('/cicd', getHealthStatus);
 router.post('/v1/file', upload.single('file'), (req, res, next) => {
     uploadFile(req, res).catch(next); // Pass errors to next middleware
 });

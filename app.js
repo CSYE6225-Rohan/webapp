@@ -8,13 +8,14 @@ const { sequelize, authenticate } = require('./config/db');
 sequelize.sync();
 
 const allowedRoutes = {
+    "/cicd"   : ["GET"],
     "/healthz": ["GET"],
     "/v1/file": ["POST"],
     "/v1/file/:id": ["GET", "DELETE"]
 };
 
 app.use((req, res, next) => {
-    if (req.path === "/healthz" && (req.headers['content-length'] && parseInt(req.headers['content-length']) > 0|| Object.keys(req.query).length > 0)) {
+    if ((req.path === "/healthz" || req.path === "/cicd") && (req.headers['content-length'] && parseInt(req.headers['content-length']) > 0|| Object.keys(req.query).length > 0)) {
         return res.status(400).send();
     }
     next();
