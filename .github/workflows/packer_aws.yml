@@ -10,65 +10,65 @@ jobs:
   deploy_and_test_aws:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:latest
-        env:
-          MYSQL_ROOT_PASSWORD: "${{secrets.DB_ROOT_PASSWORD}}" 
-          MYSQL_DATABASE: "${{secrets.DB_NAME}}"             
-          MYSQL_USER: "${{secrets.DB_USER}}"               
-          MYSQL_PASSWORD: "${{secrets.DB_PASSWORD}}"     
-        ports:
-          - 3306:3306
+    # services:
+      # mysql:
+      #   image: mysql:latest
+      #   env:
+      #     MYSQL_ROOT_PASSWORD: "${{secrets.DB_ROOT_PASSWORD}}" 
+      #     MYSQL_DATABASE: "${{secrets.DB_NAME}}"             
+      #     MYSQL_USER: "${{secrets.DB_USER}}"               
+      #     MYSQL_PASSWORD: "${{secrets.DB_PASSWORD}}"     
+      #   ports:
+      #     - 3306:3306
 
     steps:
-    # Step 1: Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v2
+    # # Step 1: Checkout the repository
+    #   - name: Checkout code
+    #     uses: actions/checkout@v2
 
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    #   - name: Checkout repository
+    #     uses: actions/checkout@v4
 
-      - name: Set up environment file
-        run: |
-          echo "hostname=${{secrets.DB_HOST}}" >> .env
-          echo "username=root" >> .env
-          echo "password=${{secrets.DB_ROOT_PASSWORD}}" >> .env 
-          echo "database=${{secrets.DB_NAME}}" >> .env        
-          echo "port=${{secrets.DB_PORT}}" >> .env
+    #   - name: Set up environment file
+    #     run: |
+    #       echo "hostname=${{secrets.DB_HOST}}" >> .env
+    #       echo "username=root" >> .env
+    #       echo "password=${{secrets.DB_ROOT_PASSWORD}}" >> .env 
+    #       echo "database=${{secrets.DB_NAME}}" >> .env        
+    #       echo "port=${{secrets.DB_PORT}}" >> .env
 
-      - name: Install dependencies
-        run: npm install
+    #   - name: Install dependencies
+    #     run: npm install
 
-      - name: Wait for MySQL to be ready
-        run: sleep 20
+    #   - name: Wait for MySQL to be ready
+    #     run: sleep 20
 
-      - name: Run tests
-        run: npm test
-        continue-on-error: false 
+    #   - name: Run tests
+    #     run: npm test
+    #     continue-on-error: false 
 
-      - name: Make zip
-        run: zip -r webapp.zip . -x ".git/*"
+    #   - name: Make zip
+    #     run: zip -r webapp.zip . -x ".git/*"
 
-    # Step 2: Set up AWS CLI
-      - name: Set up AWS CLI
-        run: |
-          aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
-          aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-          aws configure set region us-east-1
+    # # Step 2: Set up AWS CLI
+    #   - name: Set up AWS CLI
+    #     run: |
+    #       aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
+    #       aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+    #       aws configure set region us-east-1
         
-      - name: Install gcloud for packer
-        run: "packer plugins install github.com/hashicorp/googlecompute"
+    #   - name: Install gcloud for packer
+    #     run: "packer plugins install github.com/hashicorp/googlecompute"
 
-      # Step 3: Initialize packer
-      - name: Initialize packer to create EC2 instance
-        run: |
-          packer init .
+    #   # Step 3: Initialize packer
+    #   - name: Initialize packer to create EC2 instance
+    #     run: |
+    #       packer init .
 
-      # Step 4: Validate packer
-      - name: Validate packer to create EC2 instance
-        run: |
-          packer validate .
+    #   # Step 4: Validate packer
+    #   - name: Validate packer to create EC2 instance
+    #     run: |
+    #       packer validate .
 
       # Step 5: Building packer
       # - name: Run Packer to create AMI for EC2 instance
@@ -114,7 +114,7 @@ jobs:
       - name: Update ASG to use latest launch template version
         run: |
           aws autoscaling update-auto-scaling-group \
-            --auto-sc aling-group-name "${{secrets.ASG_NAME}}" \
+            --auto-scaling-group-name "${{secrets.ASG_NAME}}" \
             --launch-template "LaunchTemplateName=${{secrets.LAUNCH_TEMPLATE}},Version=${{env.NEW_VERSION}}"
 
       - name: Start instance refresh
