@@ -115,7 +115,7 @@ jobs:
         run: |
           aws autoscaling update-auto-scaling-group \
             --auto-scaling-group-name "${{secrets.ASG_NAME}}" \
-            --launch-template "LaunchTemplateName=${{secrets.LAUNCH_TEMPLATE}},Version=${{env.NEW_VERSION}}"
+            --launch-template "LaunchTemplateName=${{secrets.LAUNCH_TEMPLATE}},Version=\$Latest"
 
       - name: Start instance refresh
         id: start_refresh
