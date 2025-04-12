@@ -71,7 +71,7 @@ jobs:
           packer validate .
 
       # Step 5: Building packer
-      - name: Run Packer to create EC2 instance
+      - name: Run Packer to create AMI for EC2 instance
         run: |
           packer build \
           -var "aws_region=${{secrets.AWS_REGION}}" \
@@ -79,3 +79,66 @@ jobs:
           -var "aws_db_name=${{secrets.DB_NAME}}" \
           aws-custom-image.pkr.hcl
 
+      #Now we have to switch to demo
+      - name: Set up AWS CLI
+        run: |
+          aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID_DEMO }}"
+          aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}"
+          aws configure set region us-east-1
+
+      # Step 6: Get AMI ID
+      - name: Get latest Ubuntu AMI ID
+        id: get_ami
+        run: |
+          LATEST_AMI=$(aws ec2 describe-images \
+                        --executable-users self \
+                        --filters "Name=name,Values=custom-ubuntu-24.04-ami-*" "Name=is-public,Values=false" \
+                        --query "sort_by(Images, &CreationDate)[-1].ImageId" \
+                        --output text)
+          echo "Latest AMI: $LATEST_AMI"
+      
+      # Step 7: Create a version of launch template
+      - name: Create new launch template version with new AMI only
+        id: new_template
+        run: |
+            NEW_VERSION=$(aws ec2 create-launch-template-version \
+              --launch-template-name "${{secrets.LAUNCH_TEMPLATE}}" \
+              --source-version \$Latest \
+              --launch-template-data "{\"ImageId\":\"$LATEST_AMI\"}" \
+              --query 'VersionNumber' --output text)
+            echo "Created new version: $NEW_VERSION"
+
+      # Step 8: update asg
+      - name: Update ASG to use latest launch template version
+        run: |
+          aws autoscaling update-auto-scaling-group \
+            --auto-scaling-group-name "${{secrets.ASG_NAME}}" \
+            --launch-template "LaunchTemplateName=${{secrets.LAUNCH_TEMPLATE}},Version=$NEW_VERSION"
+          echo "ASG updated to use launch template version $NEW_VERSION"
+
+      - name: Start instance refresh
+        id: start_refresh
+        run: |
+          REFRESH_ID=$(aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name "${{secrets.ASG_NAME}}" \
+            --query "InstanceRefreshId" --output text)
+          echo "Started instance refresh with ID: $REFRESH_ID"
+
+      - name: Wait for instance refresh to complete
+        run: |
+          echo "Waiting for instance refresh to complete..."
+          while true; do
+            STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name "${{secrets.ASG_NAME}}" \
+              --instance-refresh-ids "$REFRESH_ID" \
+              --query 'InstanceRefreshes[0].Status' --output text)
+            echo "Refresh status: $STATUS"
+            if [[ "$STATUS" == "Successful" ]]; then
+              echo "Instance refresh succeeded."
+              exit 0
+            elif [[ "$STATUS" == "Failed" || "$STATUS" == "Cancelled" ]]; then
+              echo "Instance refresh failed or cancelled."
+              exit 1
+            fi
+            sleep 30
+          done
